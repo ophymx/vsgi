@@ -1,0 +1,6 @@
+*.swp
+build
+src/*.c
+examples/*.c
+gir-1.0
+vapi/vsgi*.vapi
