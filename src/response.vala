@@ -26,11 +26,7 @@ public class Response : Object {
         this.headers = new HashMap<string, string>();
         this.body = body;
         foreach (Map.Entry<string, string> header in headers.entries)
-            this.headers.set(header.key.dup(), header.value.dup());
-    }
-
-    public Response dup() {
-        return new Response(status, headers, body);
+            this.headers[header.key] = header.value;
     }
 
     public bool validate() throws InvalidResponse {

@@ -41,16 +41,6 @@ public class Request : Object {
 
     }
 
-    public Request dup() {
-        HashMap<string, string> headers = new HashMap<string, string>();
-        foreach (Map.Entry<string, string> header in this.headers.entries)
-            headers.set(header.key.dup(), header.value.dup());
-
-        return new Request(method, script_name.dup(), path_info.dup(),
-            query_string.dup(), server_addr.dup(), server_port, protocol,
-            headers, body);
-    }
-
     public bool validate() throws InvalidRequest {
         if (script_name.length > 0 & script_name[0] != '/' )
             throw new InvalidRequest.INVALID_SCRIPT_NAME(

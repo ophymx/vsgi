@@ -29,10 +29,10 @@ bool handler(VSGI.Application app) {
 
         read_size = request.in.read(buffer);
         stdout.printf("%s", (string) buffer);
-        body.add(((string) buffer).dup());
+        body.add(((string) buffer));
         while (read_size == MAX_BUFFER) {
             stdout.printf("%s", (string) buffer);
-            body.add(((string) buffer).dup());
+            body.add(((string) buffer));
             read_size = request.in.read(buffer);
         }
 

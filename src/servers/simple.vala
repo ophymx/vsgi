@@ -56,10 +56,10 @@ public class SimpleServer {
         Method method = Method.from_string(req[0]);
 
         string[] resource = req[1].split("?", 2);
-        string path_info = resource[0].dup();
+        string path_info = resource[0];
         string query_string;
         if (resource.length == 2)
-            query_string = resource[1].dup();
+            query_string = resource[1];
         else
             query_string = "";
         HashMap<string, string> headers = new HashMap<string, string>();

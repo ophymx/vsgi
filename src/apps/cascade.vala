@@ -16,10 +16,10 @@ public class Cascade : Object, Application {
     }
 
     public Response call(Request request) {
-        Response response = not_found.call(request.dup());
+        Response response = not_found.call(request);
 
         foreach (Application app in apps){
-            response = app.call(request.dup());
+            response = app.call(request);
             if (response.status != 404 & response.status != 405 )
                 return response;
         }
