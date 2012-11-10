@@ -69,9 +69,12 @@ bool handler(VSGI.Application app) {
         }
         stdout.printf("\r\n");
         request.out.printf("\r\n");
-        foreach (string chunk in response.body) {
+        foreach (Bytes chunk in response.body) {
             //stdout.printf("%s", chunk);
-            request.out.printf("%s", chunk);
+            int written = 0;
+            while (written < chunk.length)
+                written += request.out.put_str(
+                    chunk.get_data()[written:chunk.length]);
         }
 
         request.finish();

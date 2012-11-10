@@ -14,17 +14,18 @@ public class FileServer : Object, Application {
 
     public Response call(Request request) {
         HashMap<string, string> headers = new HashMap<string, string>();
-        VSGI.IterableTextStream body;
+        IterableByteStream body;
 
         try {
             string filename = Path.build_filename(dir, request.path_info);
-            headers.set("Content-Type", "text/plain");
+            headers["Content-Type"] = "text/plain";
+
             File file = File.new_for_path(filename);
             FileInfo file_info = file.query_info("*", FileQueryInfoFlags.NONE);
-            headers.set("Content-Length", file_info.get_size().to_string());
+            headers["Content-Length"] = file_info.get_size().to_string();
+
             FileInputStream file_stream = file.read();
-            DataInputStream input = new DataInputStream(file_stream);
-            body = new VSGI.IterableTextStream(input);
+            body = new IterableByteStream(file_stream);
         } catch(Error e) {
             return not_found.call(request);
         }

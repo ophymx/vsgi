@@ -80,7 +80,7 @@ public class SimpleServer {
             }
         }
 
-        IterableTextStream body = new IterableTextStream(input);
+        IterableByteStream body = new IterableByteStream(input);
 
         /* Form Request */
         Request request = new Request(method, "", path_info, query_string,
@@ -96,10 +96,11 @@ public class SimpleServer {
                 output.write("%s: %s\r\n".printf(header.key,
                     header.value).data);
             output.write("\r\n".data);
-            foreach (string chunk in response.body) {
+            foreach (Bytes chunk in response.body) {
                 size_t written = 0;
                 while (written < chunk.length)
-                    written += output.write(chunk.data[written:chunk.data.length]);
+                    written += output.write(
+                        chunk.get_data()[written:chunk.length]);
             }
             output.close();
 

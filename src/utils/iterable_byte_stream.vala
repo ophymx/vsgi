@@ -1,23 +1,23 @@
 using Gee;
 namespace VSGI {
 
-public class IterableTextStream : Object, Iterable<string> {
+public class IterableByteStream : Object, Iterable<Bytes> {
 
     private InputStream input_stream;
 
-    public Type element_type { get { return typeof(string); } }
+    public Type element_type { get { return typeof(Bytes); } }
 
-    public IterableTextStream(InputStream input_stream) {
+    public IterableByteStream(InputStream input_stream) {
         this.input_stream = input_stream;
     }
 
-    public Iterator<string> iterator(){
-        return new TextStreamIter(input_stream);
+    public Iterator<Bytes> iterator(){
+        return new ByteStreamIter(input_stream);
     }
 
 }
 
-public class TextStreamIter : Object, Iterator<string> {
+public class ByteStreamIter : Object, Iterator<Bytes> {
 
     //private const int BUFFER_SIZE = 65536;
     private const int BUFFER_SIZE = 16384;
@@ -29,7 +29,7 @@ public class TextStreamIter : Object, Iterator<string> {
     private uint8[] current_chunk = new uint8[BUFFER_SIZE];
     private uint8[] next_chunk = new uint8[BUFFER_SIZE];
 
-    public class TextStreamIter(InputStream input_stream) {
+    public class ByteStreamIter(InputStream input_stream) {
         this.input_stream = input_stream;
     }
 
@@ -63,11 +63,11 @@ public class TextStreamIter : Object, Iterator<string> {
         return false;
     }
 
-    public new string get() {
+    public new Bytes get() {
         if (current_chunk_size != BUFFER_SIZE)
-            return ((string) current_chunk).substring(0, (long) current_chunk_size);
+            return new Bytes(current_chunk[0:(current_chunk_size - 1)]);
         else
-            return (string) current_chunk;
+            return new Bytes(current_chunk);
     }
 
     public void remove() {

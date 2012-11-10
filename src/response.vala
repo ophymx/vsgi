@@ -18,10 +18,10 @@ public class Response : Object {
         get { return _status; }
     }
     public HashMap<string, string> headers;
-    public Iterable<string> body;
+    public Iterable<Bytes> body;
 
     public Response(uint status, HashMap<string, string> headers,
-        Iterable<string> body) {
+        Iterable<Bytes> body) {
         _status = status;
         this.headers = new HashMap<string, string>();
         this.body = body;

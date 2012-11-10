@@ -21,12 +21,12 @@ public class Request : Object {
     public string server_software;
     public Protocol protocol;
     public HashMap<string, string> headers;
-    public Iterable<string> body;
+    public Iterable<Bytes> body;
 
     public Request(Method method, string script_name, string path_info,
         string query_string, string server_addr, uint16 server_port,
         Protocol protocol, HashMap<string, string> headers,
-        Iterable<string> body) {
+        Iterable<Bytes> body) {
 
         this.method = method;
         this.script_name = script_name;
