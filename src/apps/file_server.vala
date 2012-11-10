@@ -17,7 +17,7 @@ public class FileServer : Object, Application {
         VSGI.IterableTextStream body;
 
         try {
-            string filename = Path.build_filename(dir, request.path);
+            string filename = Path.build_filename(dir, request.path_info);
             headers.set("Content-Type", "text/plain");
             File file = File.new_for_path(filename);
             FileInfo file_info = file.query_info("*", FileQueryInfoFlags.NONE);

@@ -13,7 +13,7 @@ public class NotFound : Object, Application {
         ArrayList<string> body = new ArrayList<string>();
 
         string message = "Not Found: '%s%s'\r\n".printf(request.script_name,
-            request.path);
+            request.path_info);
 
         body.add(message);
         headers.set("Content-Type", "text/plain");

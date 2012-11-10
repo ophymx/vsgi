@@ -56,7 +56,7 @@ public class SimpleServer {
         Method method = Method.from_string(req[0]);
 
         string[] resource = req[1].split("?", 2);
-        string path = resource[0].dup();
+        string path_info = resource[0].dup();
         string query_string;
         if (resource.length == 2)
             query_string = resource[1].dup();
@@ -83,7 +83,7 @@ public class SimpleServer {
         IterableTextStream body = new IterableTextStream(input);
 
         /* Form Request */
-        Request request = new Request(method, "", path, query_string,
+        Request request = new Request(method, "", path_info, query_string,
             "127.0.0.1", 8080, Protocol.HTTP, headers, body);
 
 

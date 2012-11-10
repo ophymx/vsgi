@@ -13,23 +13,24 @@ public errordomain InvalidRequest {
 public class Request : Object {
     public Method method;
     public string script_name;
-    public string path;
+    public string path_info;
     public string query_string;
     public string remote_addr;
     public string server_addr;
     public uint16 server_port;
+    public string server_software;
     public Protocol protocol;
     public HashMap<string, string> headers;
     public Iterable<string> body;
 
-    public Request(Method method, string script_name, string path,
+    public Request(Method method, string script_name, string path_info,
         string query_string, string server_addr, uint16 server_port,
         Protocol protocol, HashMap<string, string> headers,
         Iterable<string> body) {
 
         this.method = method;
         this.script_name = script_name;
-        this.path = path;
+        this.path_info = path_info;
         this.query_string = query_string;
         this.server_addr = server_addr;
         this.server_port = server_port;
@@ -45,7 +46,7 @@ public class Request : Object {
         foreach (Map.Entry<string, string> header in this.headers.entries)
             headers.set(header.key.dup(), header.value.dup());
 
-        return new Request(method, script_name.dup(), path.dup(),
+        return new Request(method, script_name.dup(), path_info.dup(),
             query_string.dup(), server_addr.dup(), server_port, protocol,
             headers, body);
     }
@@ -55,17 +56,17 @@ public class Request : Object {
             throw new InvalidRequest.INVALID_SCRIPT_NAME(
                 "script_name must begin with a '/'");
 
-        if (path.length > 0 & path[0] != '/')
+        if (path_info.length > 0 & path_info[0] != '/')
             throw new InvalidRequest.INVALID_PATH(
-                "path must begin with a '/'");
+                "path_info must begin with a '/'");
 
-        if (path.length == 0 & script_name.length == 0)
+        if (path_info.length == 0 & script_name.length == 0)
             throw new InvalidRequest.MISSING_PATH_AND_SCRIPT_NAME(
-                "either script_name or path must be set");
+                "either script_name or path_info must be set");
 
-        if (script_name.length == 0 & path != "/")
+        if (script_name.length == 0 & path_info != "/")
             throw new InvalidRequest.INVALID_PATH(
-                "path must be '/' if script_name is empty");
+                "path_info must be '/' if script_name is empty");
 
         if (script_name == "/")
             throw new InvalidRequest.INVALID_SCRIPT_NAME(

@@ -9,9 +9,6 @@ bool handler(VSGI.Application app) {
     FastCGI.request request;
     uint8[] buffer = new uint8[MAX_BUFFER];
     int read_size;
-    ArrayList<string> body = new ArrayList<string>();
-    HashMap<string, string> headers = new HashMap<string, string>();
-
     assert(FastCGI.request.init(out request, socket_fd) == 0);
     while (true) {
         //mutex.lock();
@@ -20,12 +17,15 @@ bool handler(VSGI.Application app) {
         if (fail)
             break;
 
-        VSGI.Method method = VSGI.Method.from_string(request.environment.get("REQUEST_METHOD"));
-        string query_string = request.environment.get("QUERY_STRING");
-        string path = request.environment.get("PATH_INFO");
-        string script_name = request.environment.get("SCRIPT_NAME");
-        string server_addr = request.environment.get("SERVER_ADDR");
-        uint16 server_port = (uint16) uint64.parse(request.environment.get("SERVER_PORT"));
+        ArrayList<string> body = new ArrayList<string>();
+        HashMap<string, string> headers = new HashMap<string, string>();
+
+        VSGI.Method method = VSGI.Method.from_string(request.environment["REQUEST_METHOD"]);
+        string query_string = request.environment["QUERY_STRING"];
+        string path_info = request.environment["PATH_INFO"];
+        string script_name = request.environment["SCRIPT_NAME"];
+        string server_addr = request.environment["SERVER_ADDR"];
+        uint16 server_port = (uint16) int.parse(request.environment["SERVER_PORT"]);
 
         read_size = request.in.read(buffer);
         stdout.printf("%s", (string) buffer);
@@ -55,8 +55,9 @@ bool handler(VSGI.Application app) {
             stdout.printf("%s\n", param);
         }
 
-        VSGI.Request req = new VSGI.Request(method, script_name, path, query_string,
-            server_addr, server_port, VSGI.Protocol.HTTP, headers, body);
+        VSGI.Request req = new VSGI.Request(method, script_name, path_info,
+            query_string, server_addr, server_port, VSGI.Protocol.HTTP, headers,
+            body);
 
         VSGI.Response response = app.call(req);
 
