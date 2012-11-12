@@ -4,15 +4,17 @@ namespace VSGI {
 
 public class NotFound : Object, Application {
 
-
     public NotFound() {
     }
 
     public Response call(Request request) {
+        return static_call(request);
+    }
+
+    public static Response static_call(Request request) {
         HashMap<string, string> headers = new HashMap<string, string>();
 
-        string message = "Not Found: '%s%s'\r\n".printf(request.script_name,
-            request.path_info);
+        string message = "Not Found: '%s'\r\n".printf(request.full_path());
 
         Body body = new Body.from_string(message);
         headers["Content-Type"] = "text/plain";
@@ -20,7 +22,6 @@ public class NotFound : Object, Application {
 
         return new Response(404, headers, body);
     }
-
 }
 
 }

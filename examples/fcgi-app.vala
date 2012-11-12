@@ -1,9 +1,7 @@
 using Gee;
+
 int socket_fd;
-//Mutex mutex;
-
 const int MAX_BUFFER = 65536;
-
 
 bool handler(VSGI.Application app) {
     FastCGI.request request;
@@ -70,7 +68,6 @@ bool handler(VSGI.Application app) {
         stdout.printf("\r\n");
         request.out.printf("\r\n");
         foreach (Bytes chunk in response.body) {
-            //stdout.printf("%s", chunk);
             int written = 0;
             while (written < chunk.length)
                 written += request.out.put_str(

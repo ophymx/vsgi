@@ -5,34 +5,31 @@ const uint16 DEFAULT_PORT = 8080;
 
 public class SimpleServer {
 
-    //private ThreadedSocketService socket_service;
-    private SocketService socket_service;
+    private ThreadedSocketService socket_service;
     private Application app;
 
     public SimpleServer(Application app) {
         this.app = app;
 
-        socket_service = new SocketService();
-
+        socket_service = new ThreadedSocketService(150);
         InetAddress addr = new InetAddress.any(SocketFamily.IPV4);
-
         InetSocketAddress socket = new InetSocketAddress(addr, DEFAULT_PORT);
 
         try {
             socket_service.add_address(socket, SocketType.STREAM,
                 SocketProtocol.TCP, null, null);
         } catch(Error e) {
-            log("simple", LogLevelFlags.LEVEL_CRITICAL, "%s\n", e.message);
+            log("simple", LogLevelFlags.LEVEL_CRITICAL, "%s", e.message);
             return;
         }
 
-        socket_service.incoming.connect( connection_handler );
+        socket_service.run.connect( connection_handler );
     }
 
     public void run() {
         MainLoop main_loop = new MainLoop();
         socket_service.start();
-        stdout.printf("Server on port %d\n", DEFAULT_PORT);
+        log("simple", LogLevelFlags.LEVEL_INFO, "Server on port %d", DEFAULT_PORT);
         main_loop.run();
     }
 
@@ -48,7 +45,7 @@ public class SimpleServer {
         try {
             req_line = input.read_line_utf8(out size);
         } catch(Error e) {
-            log("simple", LogLevelFlags.LEVEL_WARNING, "%s\n", e.message);
+            log("simple", LogLevelFlags.LEVEL_WARNING, "%s", e.message);
         }
 
         /* Parse Initial Request */
@@ -68,7 +65,7 @@ public class SimpleServer {
         try {
             req_line = input.read_line_utf8(out size);
         } catch(Error e) {
-            log("simple", LogLevelFlags.LEVEL_WARNING, "%s\n", e.message);
+            log("simple", LogLevelFlags.LEVEL_WARNING, "%s", e.message);
         }
         while(size != 0) {
             string[] header = req_line.split(": ", 2);
@@ -76,7 +73,7 @@ public class SimpleServer {
             try {
                 req_line = input.read_line_utf8(out size);
             } catch(Error e) {
-                log("simple", LogLevelFlags.LEVEL_WARNING, "%s\n", e.message);
+                log("simple", LogLevelFlags.LEVEL_WARNING, "%s", e.message);
             }
         }
 
@@ -85,7 +82,6 @@ public class SimpleServer {
         /* Form Request */
         Request request = new Request(method, "", path_info, query_string,
             "127.0.0.1", 8080, Protocol.HTTP, headers, body);
-
 
         Response response = app.call(request);
 
@@ -105,9 +101,8 @@ public class SimpleServer {
             output.close();
 
         } catch(Error e) {
-            log("simple", LogLevelFlags.LEVEL_WARNING, "%s\n", e.message);
+            log("simple", LogLevelFlags.LEVEL_WARNING, "%s", e.message);
         }
-
 
         return true;
     }

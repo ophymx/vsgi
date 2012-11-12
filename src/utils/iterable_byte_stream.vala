@@ -1,12 +1,18 @@
 using Gee;
 namespace VSGI {
 
+/**
+ *
+ */
 public class IterableByteStream : Object, Iterable<Bytes> {
 
     private InputStream input_stream;
 
     public Type element_type { get { return typeof(Bytes); } }
 
+    /**
+     *
+     */
     public IterableByteStream(InputStream input_stream) {
         this.input_stream = input_stream;
     }
@@ -17,10 +23,12 @@ public class IterableByteStream : Object, Iterable<Bytes> {
 
 }
 
+/**
+ *
+ */
 public class ByteStreamIter : Object, Iterator<Bytes> {
 
-    //private const int BUFFER_SIZE = 65536;
-    private const int BUFFER_SIZE = 16384;
+    private const int BUFFER_SIZE = 65536;
 
     private InputStream input_stream;
     private size_t current_chunk_size = 0;
@@ -29,7 +37,10 @@ public class ByteStreamIter : Object, Iterator<Bytes> {
     private uint8[] current_chunk = new uint8[BUFFER_SIZE];
     private uint8[] next_chunk = new uint8[BUFFER_SIZE];
 
-    public class ByteStreamIter(InputStream input_stream) {
+    /**
+     *
+     */
+    public ByteStreamIter(InputStream input_stream) {
         this.input_stream = input_stream;
     }
 
@@ -44,11 +55,19 @@ public class ByteStreamIter : Object, Iterator<Bytes> {
         }
         if (current_chunk_size < 1) {
             if (next_chunk_size < 1 ) {
-                input_stream.close();
+                try {
+                    input_stream.close();
+                } catch(Error e) {
+                    log("vsgi", LogLevelFlags.LEVEL_ERROR, "%s", e.message);
+                }
                 return false;
             }
             if (!next()) {
-                input_stream.close();
+                try {
+                    input_stream.close();
+                } catch(Error e) {
+                    log("vsgi", LogLevelFlags.LEVEL_ERROR, "%s", e.message);
+                }
                 return false;
             }
         }
@@ -65,7 +84,7 @@ public class ByteStreamIter : Object, Iterator<Bytes> {
 
     public new Bytes get() {
         if (current_chunk_size != BUFFER_SIZE)
-            return new Bytes(current_chunk[0:(current_chunk_size - 1)]);
+            return new Bytes(current_chunk[0:current_chunk_size]);
         else
             return new Bytes(current_chunk);
     }

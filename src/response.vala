@@ -13,22 +13,37 @@ public errordomain InvalidResponse {
 public class Response : Object {
     private uint _status;
 
-
+    /**
+     *
+     */
     public uint status {
         get { return _status; }
+        private set { _status = value; }
     }
-    public HashMap<string, string> headers;
+
+    /**
+     *
+     */
+    public Map<string, string> headers;
+
+    /**
+     *
+     */
     public Iterable<Bytes> body;
 
+    /**
+     *
+     */
     public Response(uint status, HashMap<string, string> headers,
         Iterable<Bytes> body) {
-        _status = status;
-        this.headers = new HashMap<string, string>();
+        this.status = status;
+        this.headers = headers;
         this.body = body;
-        foreach (Map.Entry<string, string> header in headers.entries)
-            this.headers[header.key] = header.value;
     }
 
+    /**
+     *
+     */
     public bool validate() throws InvalidResponse {
         if (status < 100 | status > 599)
             throw new InvalidResponse.INVALID_STATUS_CODE(
@@ -67,10 +82,7 @@ public class Response : Object {
             if (header_key.index_of_char('\n') >= 0)
                 throw new InvalidResponse.INVALID_HEADER(
                     "header key must not contain a newline");
-
-
         }
-
         return true;
     }
 }

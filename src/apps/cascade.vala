@@ -2,25 +2,36 @@ using Gee;
 
 namespace VSGI {
 
+/**
+ * Cascade app
+ */
 public class Cascade : Object, Application {
 
     public ArrayList<Application> apps;
-    private Application not_found;
+    private HashSet<uint> catches;
 
-    public Cascade(ArrayList<Application> apps) {
+    /**
+     *
+     */
+    public Cascade(ArrayList<Application> apps, uint[] catches = {404, 405}) {
         this.apps = new ArrayList<Application>();
         foreach (Application app in apps)
             this.apps.add(app);
 
-        not_found = new NotFound();
+        this.catches = new HashSet<uint>();
+        foreach(uint value in catches)
+            this.catches.add(value);
     }
 
+    /**
+     *
+     */
     public Response call(Request request) {
-        Response response = not_found.call(request);
+        Response response = NotFound.static_call(request);
 
         foreach (Application app in apps){
             response = app.call(request);
-            if (response.status != 404 & response.status != 405 )
+            if (!catches.contains(response.status))
                 return response;
         }
         return response;

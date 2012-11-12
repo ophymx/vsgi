@@ -5,11 +5,9 @@ namespace VSGI {
 public class FileServer : Object, Application {
 
     private string dir;
-    private Application not_found;
 
     public FileServer(string dir = "public") {
         this.dir = dir;
-        not_found = new NotFound();
     }
 
     public Response call(Request request) {
@@ -27,7 +25,7 @@ public class FileServer : Object, Application {
             FileInputStream file_stream = file.read();
             body = new IterableByteStream(file_stream);
         } catch(Error e) {
-            return not_found.call(request);
+            return NotFound.static_call(request);
         }
 
         return new Response(200, headers, body);
