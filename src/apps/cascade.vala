@@ -1,5 +1,3 @@
-using Gee;
-
 namespace VSGI {
 
 /**
@@ -7,20 +5,22 @@ namespace VSGI {
  */
 public class Cascade : Object, Application {
 
-    public ArrayList<Application> apps;
-    private HashSet<uint> catches;
+    public Gee.List<Application> apps;
+    private Gee.HashSet<uint> catches;
 
     /**
      *
      */
-    public Cascade(ArrayList<Application> apps, uint[] catches = {404, 405}) {
-        this.apps = new ArrayList<Application>();
-        foreach (Application app in apps)
-            this.apps.add(app);
+    public Cascade(Gee.List<Application> apps=null,
+        uint[] catches = {404, 405}) {
+        if (apps == null)
+            this.apps = new Gee.ArrayList<Application>();
+        else
+            this.apps = apps;
 
-        this.catches = new HashSet<uint>();
-        foreach(uint value in catches)
-            this.catches.add(value);
+        this.catches = new Gee.HashSet<uint>();
+        foreach(uint status in catches)
+            this.catches.add(status);
     }
 
     /**

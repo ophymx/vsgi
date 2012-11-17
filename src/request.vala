@@ -1,4 +1,3 @@
-using Gee;
 namespace VSGI {
 
 /**
@@ -55,11 +54,15 @@ public class Request : Object {
     /**
      *
      */
-    public Map<string, string> headers { get; set; }
+    public Scheme scheme { get; private set; }
     /**
      *
      */
-    public Iterable<Bytes> body;
+    public Gee.Map<string, string> headers { get; set; }
+    /**
+     *
+     */
+    public Gee.Iterable<Bytes> body;
 
     /**
      * @param method            http request method {@link VSGI.Method}
@@ -68,23 +71,33 @@ public class Request : Object {
      * @param query_string      query string in request
      * @param server_addr       server address
      * @param server_port       server port
-     * @param protocol          protocol (http or https)
+     * @param protocol          protocol (HTTP/1.0 or HTTP/1.1)
+     * @param scheme            scheme (http or https)
      * @param headers           request headers
-     * @param body              request body as an iterable collection of bytes
+     * @param body              request body as an iterable collection of Bytes
      * @return                  newly created request
      */
-    public Request(Method method, string script_name, string path_info,
-        string query_string, string server_addr, uint16 server_port,
-        Protocol protocol, Map<string, string> headers,
-        Iterable<Bytes> body) {
+    public Request(Method method,
+                   string script_name,
+                   string path_info,
+                   string query_string,
+                   string remote_addr,
+                   string server_addr,
+                   uint16 server_port,
+                   Protocol protocol,
+                   Scheme shceme,
+                   Gee.Map<string, string> headers,
+                   Gee.Iterable<Bytes> body) {
 
         this.method = method;
         this.script_name = script_name;
         this.path_info = path_info;
         this.query_string = query_string;
+        this.remote_addr = remote_addr;
         this.server_addr = server_addr;
         this.server_port = server_port;
         this.protocol = protocol;
+        this.scheme = scheme;
 
         this.headers = headers;
         this.body = body;

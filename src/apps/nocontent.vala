@@ -1,5 +1,3 @@
-using Gee;
-
 namespace VSGI {
 
 public class NoContent : Object, Application {
@@ -8,7 +6,7 @@ public class NoContent : Object, Application {
     }
 
     public Response call(Request request) {
-        HashMap<string, string> headers = new HashMap<string, string>();
+        Gee.HashMap<string, string> headers = new Gee.HashMap<string, string>();
 
         return new Response(204, headers, new Body.empty());
     }

@@ -1,5 +1,3 @@
-using Gee;
-
 namespace VSGI {
 
 public class FileServer : Object, Application {
@@ -11,7 +9,7 @@ public class FileServer : Object, Application {
     }
 
     public Response call(Request request) {
-        HashMap<string, string> headers = new HashMap<string, string>();
+        Gee.HashMap<string, string> headers = new Gee.HashMap<string, string>();
         IterableByteStream body;
 
         try {

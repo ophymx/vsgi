@@ -6,3 +6,5 @@ examples/*.c
 examples/**/*.c
 gir-1.0
 vapi/vsgi*.vapi
+public
+config.ru

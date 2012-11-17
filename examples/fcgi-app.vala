@@ -23,6 +23,7 @@ bool handler(VSGI.Application app) {
         string path_info = request.environment["PATH_INFO"];
         string script_name = request.environment["SCRIPT_NAME"];
         string server_addr = request.environment["SERVER_ADDR"];
+        string remote_addr = request.environment["REMOTE_ADDR"];
         uint16 server_port = (uint16) int.parse(request.environment["SERVER_PORT"]);
 
         read_size = request.in.read(buffer);
@@ -54,8 +55,8 @@ bool handler(VSGI.Application app) {
         }
 
         VSGI.Request req = new VSGI.Request(method, script_name, path_info,
-            query_string, server_addr, server_port, VSGI.Protocol.HTTP, headers,
-            body);
+            query_string, remote_addr, server_addr, server_port,
+            VSGI.Protocol.HTTP1_1, VSGI.Scheme.HTTP, headers, body);
 
         VSGI.Response response = app.call(req);
 

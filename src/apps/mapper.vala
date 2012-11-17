@@ -1,30 +1,26 @@
-using Gee;
-
 namespace VSGI {
 
 /**
  * Mapper app
  */
-public class Mapper : Object, Application {
+public class Mapper : Object, Application, CompositeApp {
 
-    private Map<string, Application> apps;
-    private Application default_app;
+    private Gee.Map<string, Application> apps;
+    public Application app { get; set; }
 
     /**
      *
      */
-    public Mapper(Map<string, Application> apps,
-        Application? default_app=null) {
+    public Mapper(Gee.Map<string, Application> apps,
+        Application? app=null) {
         this.apps = apps;
-
-        if (default_app == null)
-            this.default_app = new NotFound();
-        else
-            this.default_app = default_app;
+        this.app = app;
     }
 
     /**
      *
+     * TODO
+     * * Rethink implementation and use
      */
     public Response call(Request request) {
         string path = request.path_info;
@@ -40,7 +36,9 @@ public class Mapper : Object, Application {
                 return app.call(request);
             }
         }
-        return default_app.call(request);
+        if (this.app == null)
+            return NotFound.static_call(request);
+        return this.app.call(request);
     }
 }
 

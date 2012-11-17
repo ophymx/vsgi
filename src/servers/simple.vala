@@ -29,7 +29,8 @@ public class SimpleServer {
     public void run() {
         MainLoop main_loop = new MainLoop();
         socket_service.start();
-        log("simple", LogLevelFlags.LEVEL_INFO, "Server on port %d", DEFAULT_PORT);
+        log("simple", LogLevelFlags.LEVEL_INFO, "Server on port %d",
+            DEFAULT_PORT);
         main_loop.run();
     }
 
@@ -81,13 +82,14 @@ public class SimpleServer {
 
         /* Form Request */
         Request request = new Request(method, "", path_info, query_string,
-            "127.0.0.1", 8080, Protocol.HTTP, headers, body);
+            "127.0.0.1", "127.0.0.1", DEFAULT_PORT, Protocol.HTTP1_1,
+            Scheme.HTTP, headers, body);
 
         Response response = app.call(request);
 
         try {
-            output.write("HTTP/1.1 %u %s\r\n".printf(response.status,
-                Utils.status_message(response.status)).data);
+            output.write("%s %u %s\r\n".printf(Protocol.HTTP1_1.to_string(),
+                response.status, Utils.status_message(response.status)).data);
             foreach (var header in response.headers.entries)
                 output.write("%s: %s\r\n".printf(header.key,
                     header.value).data);

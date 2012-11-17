@@ -1,5 +1,3 @@
-using Gee;
-
 namespace VSGI {
 
 public class NotFound : Object, Application {
@@ -12,7 +10,7 @@ public class NotFound : Object, Application {
     }
 
     public static Response static_call(Request request) {
-        HashMap<string, string> headers = new HashMap<string, string>();
+        Gee.HashMap<string, string> headers = new Gee.HashMap<string, string>();
 
         string message = "Not Found: '%s'\r\n".printf(request.full_path());
 

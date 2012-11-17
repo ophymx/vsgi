@@ -1,5 +1,3 @@
-using Gee;
-
 namespace VSGI {
 
 public errordomain InvalidResponse {
@@ -24,18 +22,18 @@ public class Response : Object {
     /**
      *
      */
-    public Map<string, string> headers;
+    public Gee.Map<string, string> headers;
 
     /**
      *
      */
-    public Iterable<Bytes> body;
+    public Gee.Iterable<Bytes> body;
 
     /**
      *
      */
-    public Response(uint status, HashMap<string, string> headers,
-        Iterable<Bytes> body) {
+    public Response(uint status, Gee.Map<string, string> headers,
+        Gee.Iterable<Bytes> body) {
         this.status = status;
         this.headers = headers;
         this.body = body;

@@ -51,7 +51,7 @@ public class ByteStreamIter : Object, Iterator<Bytes> {
             next_chunk_size = input_stream.read(next_chunk);
             collected += next_chunk_size;
         } catch(Error e) {
-            stderr.printf("%s\n", e.message);
+            log("vsgi", LogLevelFlags.LEVEL_ERROR, "%s", e.message);
         }
         if (current_chunk_size < 1) {
             if (next_chunk_size < 1 ) {
