@@ -1,3 +1,24 @@
+/* servers/simple.vala
+ *
+ * Copyright (C) 2012 Jeffrey T. Peckham
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+ *
+ * Author:
+ *      Jeffrey T. Peckham <abic@ophymx.com>
+ */
 using Gee;
 namespace VSGI {
 
@@ -6,6 +27,7 @@ const uint16 DEFAULT_PORT = 8080;
 public class SimpleServer {
 
     private ThreadedSocketService socket_service;
+    private MainLoop main_loop;
     private Application app;
 
     public SimpleServer(Application app) {
@@ -14,6 +36,7 @@ public class SimpleServer {
         socket_service = new ThreadedSocketService(150);
         InetAddress addr = new InetAddress.any(SocketFamily.IPV4);
         InetSocketAddress socket = new InetSocketAddress(addr, DEFAULT_PORT);
+        main_loop = new MainLoop();
 
         try {
             socket_service.add_address(socket, SocketType.STREAM,
@@ -27,11 +50,16 @@ public class SimpleServer {
     }
 
     public void run() {
-        MainLoop main_loop = new MainLoop();
         socket_service.start();
         log("simple", LogLevelFlags.LEVEL_INFO, "Server on port %d",
             DEFAULT_PORT);
         main_loop.run();
+    }
+
+    public void stop() {
+        log("simple", LogLevelFlags.LEVEL_INFO, "Shutting down");
+        socket_service.stop();
+        main_loop.quit();
     }
 
     private bool connection_handler(SocketConnection conn) {

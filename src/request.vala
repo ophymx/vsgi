@@ -1,3 +1,24 @@
+/* request.vala
+ *
+ * Copyright (C) 2012 Jeffrey T. Peckham
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+ *
+ * Author:
+ *      Jeffrey T. Peckham <abic@ophymx.com>
+ */
 namespace VSGI {
 
 /**
@@ -65,17 +86,17 @@ public class Request : Object {
     public Gee.Iterable<Bytes> body;
 
     /**
-     * @param method            http request method {@link VSGI.Method}
-     * @param script_name       path of script invoked by request
-     * @param path_info         path of the request after the script
-     * @param query_string      query string in request
-     * @param server_addr       server address
-     * @param server_port       server port
-     * @param protocol          protocol (HTTP/1.0 or HTTP/1.1)
-     * @param scheme            scheme (http or https)
-     * @param headers           request headers
-     * @param body              request body as an iterable collection of Bytes
-     * @return                  newly created request
+     * @param method       http request method {@link VSGI.Method}
+     * @param script_name  path of script invoked by request
+     * @param path_info    path of the request after the script
+     * @param query_string query string in request
+     * @param server_addr  server address
+     * @param server_port  server port
+     * @param protocol     http protocol (1.0 or 1.1) {@link VSGI.Protocol}
+     * @param scheme       scheme (http or https) {@link VSGI.Scheme}
+     * @param headers      request headers
+     * @param body         request body as an iterable collection of Bytes
+     * @return             newly created request
      */
     public Request(Method method,
                    string script_name,
@@ -85,7 +106,7 @@ public class Request : Object {
                    string server_addr,
                    uint16 server_port,
                    Protocol protocol,
-                   Scheme shceme,
+                   Scheme scheme,
                    Gee.Map<string, string> headers,
                    Gee.Iterable<Bytes> body) {
 
@@ -101,8 +122,70 @@ public class Request : Object {
 
         this.headers = headers;
         this.body = body;
-
     }
+
+    public Request.from_cgi(Gee.Map<string, string> cgi_env,
+        Gee.Iterable<Bytes> body) {
+        this.headers = new Gee.HashMap<string, string>();
+        foreach(Gee.Map.Entry<string, string> cgi_var in cgi_env.entries) {
+            string key = cgi_var.key;
+            string val = cgi_var.value;
+            switch(key) {
+                case "AUTH_TYPE":
+                    break;
+                case "CONTENT_LENGTH":
+                    headers["Content-Length"] = val;
+                    break;
+                case "CONTENT_TYPE":
+                    headers["Content-Type"] = val;
+                    break;
+                case "GATEWAY_INTERFACE":
+                    break;
+                case "PATH_INFO":
+                    this.path_info = val;
+                    break;
+                case "PATH_TRANSLATED":
+                    break;
+                case "QUERY_STRING":
+                    this.query_string = val;
+                    break;
+                case "REMOTE_ADDR":
+                    this.remote_addr = val;
+                    break;
+                case "REMOTE_HOST":
+                    break;
+                case "REMOTE_IDENT":
+                    break;
+                case "REMOTE_USER":
+                    break;
+                case "REQUEST_METHOD":
+                    this.method = Method.from_string(val);
+                    break;
+                case "SCRIPT_NAME":
+                    this.script_name = val;
+                    break;
+                case "SERVER_NAME":
+                    this.server_addr = val;
+                    break;
+                case "SERVER_PORT":
+                    this.server_port = (uint16) int.parse(val);
+                    break;
+                case "SERVER_PROTOCOL":
+                    this.protocol = Protocol.from_string(val);
+                    break;
+                case "SERVER_SOFTWARE":
+                    this.server_software = val;
+                    break;
+                default:
+                    if (cgi_var.key.index_of("HTTP_") == 0)
+                        headers[key[5:key.length]] = val;
+                    break;
+            }
+        }
+
+        this.body = body;
+    }
+
 
     /**
      * @return  combined script_name and path_info.

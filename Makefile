@@ -5,6 +5,6 @@ FCGI_APP_FLAGS := --pkg libfcgi -X -lfcgi
 
 include common.mk
 
-run: build/simple-server
-	build/simple-server
+run: lib build/simple-server
+	$(RUNENV) build/simple-server
 

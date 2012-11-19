@@ -1,7 +1,9 @@
 using Gee;
 using VSGI;
 
-public static VSGI.Application app() {
+SimpleServer ws;
+
+VSGI.Application app() {
     var apps = new HashMap<string, VSGI.Application>();
     var stack = new CompositeStack();
     stack.add(new CommonLogger());
@@ -13,12 +15,23 @@ public static VSGI.Application app() {
     return new Mapper(apps);
 }
 
-public static void main() {
-    Log.set_handler("VSGI.CommonLogger", LogLevelFlags.LEVEL_MASK,
-        (domain, levels, msg) => {
-            stderr.printf("%s\n", msg.split(" ", 2)[1]);
-        });
+const int[] STOP_SIGNALS = { Posix.SIGTERM, Posix.SIGINT, Posix.SIGQUIT };
 
-    var ws = new SimpleServer(app());
+void stdout_logfunc(string? domain, LogLevelFlags levels, string message) {
+    stdout.printf("%s\n", message.split(" ", 2)[1]);
+}
+
+int main(string[] args) {
+    Log.set_handler("VSGI.CommonLogger", LogLevelFlags.LEVEL_MASK,
+        stdout_logfunc);
+    Log.set_handler("simple", LogLevelFlags.LEVEL_MASK, stdout_logfunc);
+
+    ws = new SimpleServer(app());
+
+    foreach(int signum in STOP_SIGNALS) {
+        Posix.signal(signum, (s) => { ws.stop(); });
+    }
+
     ws.run();
+    return 0;
 }

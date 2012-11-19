@@ -1,10 +1,8 @@
 *.swp
+*.c
 build
-src/*.c
-src/**/*.c
-examples/*.c
-examples/**/*.c
 gir-1.0
 vapi/vsgi*.vapi
 public
 config.ru
+docs
