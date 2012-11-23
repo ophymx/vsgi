@@ -21,13 +21,26 @@
  */
 namespace VSGI {
 
+/**
+ *
+ */
 public errordomain AppLoadError {
-    FILE
+    FILE_NOT_FOUND,
+    MODULE_OPEN,
+    SYMBOL_NOT_FOUND,
+    SETUP_RETURNED_NULL
 }
 
+/**
+ *
+ */
 public abstract class Server {
 
     protected static const string SETUP_FUNC = "setup_app";
+
+    /**
+     *
+     */
     protected delegate Application AppSetupFunc(Server server);
 
     protected Application app;
@@ -35,34 +48,48 @@ public abstract class Server {
     public Server() {
     }
 
-    public abstract void run();
+    /**
+     * Start server
+     */
+    public abstract void start();
 
+    /**
+     * Stop server
+     */
     public abstract void stop();
 
+    /**
+     * Loads app into server from externally defined setup_app()
+     *
+     * @param setup_file path to shard object with setup_app() defined
+     * @throws AppLoadError Errors from loading app
+     * @return true if successfully loaded
+     */
     public bool load_app(string setup_file) throws AppLoadError {
         Module module = Module.open(setup_file, ModuleFlags.BIND_MASK);
 
         if (module == null) {
-            error("Failed to load setup file '%s': %s", setup_file,
+            throw new AppLoadError.MODULE_OPEN(
+                "Failed to load setup file '%s': %s", setup_file,
                 Module.error());
         }
 
         void* function;
 
         if (!module.symbol(SETUP_FUNC, out function)) {
-            error("Failed to find function '%s' in '%s': %s", SETUP_FUNC,
+            throw new ApploadError.SYMBOL_NOT_FOUND(
+                "Failed to find function '%s' in '%s': %s", SETUP_FUNC,
                 setup_file, Module.error());
         }
 
-        //unowned AppSetupFunc setup_app = (AppSetupFunc) function;
-        //assert(setup_app != null);
         this.app = ((AppSetupFunc) function)(this);
-        assert(this.app != null);
-        stdout.printf("%s\n", this.app.get_type().name());
-
         if (this.app == null) {
-            return false;
+            throw new AppLoadError.SETUP_RETURNED_NULL("'%s' returned null",
+                SETUP_FUNC);
         }
+
+        log("vsgi", LogLevelFlags.LEVEL_DEBUG, "loaded '%s' app",
+            this.app.get_type().name());
 
         return true;
     }

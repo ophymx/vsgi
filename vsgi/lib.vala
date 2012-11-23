@@ -20,8 +20,14 @@
  *      Jeffrey T. Peckham <abic@ophymx.com>
  */
 
+/**
+ * The Vala web middleware framework
+ *
+ *
+ */
+[CCode (cheader_filename = "config.h")]
 namespace VSGI {
 
-public const string VERSION = "0.0.1";
+public const string VERSION;
 
 }
