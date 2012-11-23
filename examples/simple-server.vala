@@ -3,18 +3,6 @@ using VSGI;
 
 SimpleServer ws;
 
-VSGI.Application app() {
-    var apps = new HashMap<string, VSGI.Application>();
-    var stack = new CompositeStack();
-    stack.add(new CommonLogger());
-    stack.add(new SuffixMapper());
-    stack.app = new FileServer("public");
-
-    apps["/foobar"] = stack;
-
-    return new Mapper(apps);
-}
-
 const int[] STOP_SIGNALS = { Posix.SIGTERM, Posix.SIGINT, Posix.SIGQUIT };
 
 void stdout_logfunc(string? domain, LogLevelFlags levels, string message) {
@@ -26,7 +14,12 @@ int main(string[] args) {
         stdout_logfunc);
     Log.set_handler("simple", LogLevelFlags.LEVEL_MASK, stdout_logfunc);
 
-    ws = new SimpleServer(app());
+    ws = new SimpleServer();
+    try {
+        ws.load_app("libsetup_app");
+    } catch (AppLoadError e) {
+        error("%s", e.message);
+    }
 
     foreach(int signum in STOP_SIGNALS) {
         Posix.signal(signum, (s) => { ws.stop(); });

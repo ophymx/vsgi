@@ -24,13 +24,12 @@ namespace VSGI {
 
 const uint16 DEFAULT_PORT = 8080;
 
-public class SimpleServer {
+public class SimpleServer : Server {
 
     private ThreadedSocketService socket_service;
     private MainLoop main_loop;
-    private Application app;
 
-    public SimpleServer(Application app) {
+    public SimpleServer(Application? app=null) {
         this.app = app;
 
         socket_service = new ThreadedSocketService(150);
@@ -49,14 +48,14 @@ public class SimpleServer {
         socket_service.run.connect( connection_handler );
     }
 
-    public void run() {
+    public override void run() {
         socket_service.start();
         log("simple", LogLevelFlags.LEVEL_INFO, "Server on port %d",
             DEFAULT_PORT);
         main_loop.run();
     }
 
-    public void stop() {
+    public override void stop() {
         log("simple", LogLevelFlags.LEVEL_INFO, "Shutting down");
         socket_service.stop();
         main_loop.quit();
@@ -113,7 +112,7 @@ public class SimpleServer {
             "127.0.0.1", "127.0.0.1", DEFAULT_PORT, Protocol.HTTP1_1,
             Scheme.HTTP, headers, body);
 
-        Response response = app.call(request);
+        Response response = this.app.call(request);
 
         try {
             output.write("%s %u %s\r\n".printf(Protocol.HTTP1_1.to_string(),
