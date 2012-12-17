@@ -1,7 +1,7 @@
 VSGI.Request mock_request() {
     Gee.HashMap<string, string> headers = new Gee.HashMap<string, string>();
     headers["User-Agent"] = "Mock Agent";
-    headers["Host"] = "10.0.1.2";
+    headers["Host"] = "myhost";
     headers["Accept"] = "*/*";
 
     VSGI.Body body = new VSGI.Body.empty();
@@ -18,4 +18,10 @@ VSGI.Request mock_request() {
         headers,
         body
     );
+}
+
+public class MockRequest {
+    public MockRequest() {
+
+    }
 }

@@ -1,4 +1,4 @@
-/* application.vala
+/* apps/lint.vala
  *
  * Copyright (C) 2012 Jeffrey T. Peckham
  *
@@ -22,17 +22,27 @@
 namespace VSGI {
 
 /**
- * Implemented by classes that run as apps on VSGI.
+ *
  */
-public interface Application : Object {
+public class Lint : Object, Application, CompositeApp {
+
+    public Application app { set; get; }
+
+    public Lint(Application? app=null) {
+        this.app = app;
+    }
 
     /**
-     * Called when a request is made to the app.
-     *
-     * @param request   the request
-     * @return          response to request
+     * {@inheritDoc}
      */
-    public abstract Response call(Request request);
+    public Response call(Request request) {
+        request.validate();
+        if (app == null)
+            throw new CompositeAppError.NULL_APP("");
+        Response response = app.call(request);
+        response.validate();
+        return response;
+    }
 }
 
 }

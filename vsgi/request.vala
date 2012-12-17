@@ -186,12 +186,82 @@ public class Request : Object {
         this.body = body;
     }
 
+    /**
+     * @return combined script_name and path_info.
+     */
+    public string path() {
+        return script_name.concat(path_info);
+    }
 
     /**
-     * @return  combined script_name and path_info.
+     * @return combined path and query_string.
      */
     public string full_path() {
-        return script_name.concat(path_info);
+        return path().concat(query_string);
+    }
+
+    /**
+     * @return full url
+     */
+    public string full_url() {
+        StringBuilder builder = new StringBuilder();
+        builder.append_printf("%s://%s", scheme.to_string(), host());
+        if (server_port != scheme.default_port()) {
+            builder.append_printf(":%u", server_port);
+        }
+        builder.append(full_path());
+        return builder.str;
+    }
+
+    /**
+     * @return host
+     */
+    public string host() {
+        if (headers.has_key("Host")) {
+            return headers["Host"];
+        } else {
+            return server_addr;
+        }
+    }
+
+    /**
+     * @return true if other request equals this request
+     */
+    public bool equal_to(Request other) {
+        if (method != other.method) return false;
+        if (script_name != other.script_name) return false;
+        if (path_info != other.path_info) return false;
+        if (query_string != other.query_string) return false;
+        if (remote_addr != other.remote_addr) return false;
+        if (server_addr != other.server_addr) return false;
+        if (server_port != other.server_port) return false;
+        if (protocol != other.protocol) return false;
+        if (scheme != other.scheme) return false;
+        if (!(headers.keys.contains_all(other.headers.keys) &&
+            other.headers.keys.contains_all(headers.keys)))
+            return false;
+        foreach(string key in headers.keys) {
+            if (headers[key] != other.headers[key])
+                return false;
+        }
+
+        ByteArray body_data = new ByteArray();
+        foreach(Bytes chunk in body) {
+            body_data.append(chunk.get_data());
+        }
+        ByteArray other_body_data = new ByteArray();
+        foreach(Bytes chunk in other.body) {
+            other_body_data.append(chunk.get_data());
+        }
+        if (body_data.len != other_body_data.len)
+            return false;
+
+        for(int i = 0; i < body_data.len; i++) {
+            if (body_data.data[i] != other_body_data.data[i])
+                return false;
+        }
+        return true;
+
     }
 
     /**

@@ -19,22 +19,22 @@
  * Author:
  *      Jeffrey T. Peckham <abic@ophymx.com>
  */
-using Gee;
-namespace VSGI {
 
-const uint16 DEFAULT_PORT = 8080;
-
-public class SimpleServer : Server {
+/**
+ *
+ */
+public class SimpleServer : VSGI.Server {
 
     private ThreadedSocketService socket_service;
     private MainLoop main_loop;
+    private uint port;
 
-    public SimpleServer(Application? app=null) {
-        this.app = app;
+    public SimpleServer(port=8080) {
+        this.port = port;
 
         socket_service = new ThreadedSocketService(150);
         InetAddress addr = new InetAddress.any(SocketFamily.IPV4);
-        InetSocketAddress socket = new InetSocketAddress(addr, DEFAULT_PORT);
+        InetSocketAddress socket = new InetSocketAddress(addr, this.port);
         main_loop = new MainLoop();
 
         try {
@@ -48,10 +48,10 @@ public class SimpleServer : Server {
         socket_service.run.connect( connection_handler );
     }
 
-    public override void run() {
+    public override void start() {
         socket_service.start();
         log("simple", LogLevelFlags.LEVEL_INFO, "Server on port %d",
-            DEFAULT_PORT);
+            this.port);
         main_loop.run();
     }
 
@@ -78,7 +78,7 @@ public class SimpleServer : Server {
 
         /* Parse Initial Request */
         string[] req = req_line.split(" ");
-        Method method = Method.from_string(req[0]);
+        VSGI.Method method = VSGI.Method.from_string(req[0]);
 
         string[] resource = req[1].split("?", 2);
         string path_info = resource[0];
@@ -87,7 +87,7 @@ public class SimpleServer : Server {
             query_string = resource[1];
         else
             query_string = "";
-        HashMap<string, string> headers = new HashMap<string, string>();
+        Gee.HashMap<string, string> headers = new Gee.HashMap<string, string>();
 
         /* Parse Headers */
         try {
@@ -105,18 +105,19 @@ public class SimpleServer : Server {
             }
         }
 
-        IterableByteStream body = new IterableByteStream(input);
+        VSGI.IterableByteStream body = new VSGI.IterableByteStream(input);
 
         /* Form Request */
-        Request request = new Request(method, "", path_info, query_string,
-            "127.0.0.1", "127.0.0.1", DEFAULT_PORT, Protocol.HTTP1_1,
-            Scheme.HTTP, headers, body);
+        VSGI.Request request = new VSGI.Request(method, "", path_info,
+            query_string, "127.0.0.1", "127.0.0.1", this.port,
+            VSGI.Protocol.HTTP1_1, VSGI.Scheme.HTTP, headers, body);
 
-        Response response = this.app.call(request);
+        VSGI.Response response = this.app.call(request);
 
         try {
-            output.write("%s %u %s\r\n".printf(Protocol.HTTP1_1.to_string(),
-                response.status, Utils.status_message(response.status)).data);
+            output.write("%s %u %s\r\n".printf(
+                VSGI.Protocol.HTTP1_1.to_string(), response.status,
+                VSGI.Utils.status_message(response.status)).data);
             foreach (var header in response.headers.entries)
                 output.write("%s: %s\r\n".printf(header.key,
                     header.value).data);
@@ -135,6 +136,4 @@ public class SimpleServer : Server {
 
         return true;
     }
-}
-
 }

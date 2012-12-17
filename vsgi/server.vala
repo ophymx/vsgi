@@ -77,7 +77,7 @@ public abstract class Server {
         void* function;
 
         if (!module.symbol(SETUP_FUNC, out function)) {
-            throw new ApploadError.SYMBOL_NOT_FOUND(
+            throw new AppLoadError.SYMBOL_NOT_FOUND(
                 "Failed to find function '%s' in '%s': %s", SETUP_FUNC,
                 setup_file, Module.error());
         }

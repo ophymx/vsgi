@@ -1,4 +1,4 @@
-/* application.vala
+/* compositeapp.vala
  *
  * Copyright (C) 2012 Jeffrey T. Peckham
  *
@@ -21,18 +21,19 @@
  */
 namespace VSGI {
 
+public errordomain CompositeAppError {
+    NULL_APP
+}
+
 /**
- * Implemented by classes that run as apps on VSGI.
+ * Implemented by classes that can be chained together.
  */
-public interface Application : Object {
+public interface CompositeApp : Object, Application {
 
     /**
-     * Called when a request is made to the app.
-     *
-     * @param request   the request
-     * @return          response to request
+     * The app to call through to.
      */
-    public abstract Response call(Request request);
+    public abstract Application app { get; set; }
 }
 
 }

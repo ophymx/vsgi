@@ -18,24 +18,24 @@ GIR      := gir-1.0/$(NAME)-$(VER).gir
 LIB_HDR  := build/$(PACKAGE).h
 LIB_VAPI := vapi/$(PACKAGE).vapi
 
-LIB_SRC  := $(shell find 'src/' -type f -name "*.vala")
+LIB_SRC  := $(shell find 'vsgi/' -type f -name "*.vala")
 LFLAGS   := -X -fPIC -X -shared --gir=$(GIR) --library=$(LIB_VAPI:.vapi=) \
             -H $(LIB_HDR) -o $(LIB)
 
-EX_SRC   := $(shell find 'examples/' -type f -name "*.vala")
-EX       := $(subst examples/,build/,$(EX_SRC:.vala=))
-EFLAGS   := -X -Lbuild -X -l$(PACKAGE) -X -Ibuild --pkg $(PACKAGE)
+SRV_SRC   := $(shell find 'servers/' -type f -name "*.vala")
+SRV       := $(subst servers/,build/,$(SRV_SRC:.vala=))
+SFLAGS    := -X -Lbuild -X -l$(PACKAGE) -X -Ibuild --pkg $(PACKAGE)
 
 TEST_SRC := $(shell find 'tests/' -type f -name "*.vala")
-TFLAGS   := $(EFLAGS)
+TFLAGS   := -X -Lbuild -X -l$(PACKAGE) -X -Ibuild --pkg $(PACKAGE)
 
-.PHONY: all lib examples tests clean docs run
+.PHONY: all lib servers check clean docs run
 
-all: lib examples
+all: lib
 lib: $(LIB)
-examples: $(EX)
+servers: $(SRV)
 docs: docs/index.html
-tests: lib build/tests
+check: lib build/tests
 	$(RUNENV) build/tests
 
 $(LIB): $(LIB_SRC)
@@ -50,7 +50,7 @@ docs/index.html: $(LIB_SRC)
 build/tests: $(TEST_SRC) $(LIB)
 	$(VALAC) $(FLAGS) $(TFLAGS) $(PKGS) -o $@ $(TEST_SRC)
 
-build/%: examples/%.vala
+build/%: servers/%.vala
 	$(VALAC) $(FLAGS) $(EFLAGS) $(call example_flags) $(PKGS) -o $@ $^
 
 clean:

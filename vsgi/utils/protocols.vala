@@ -27,6 +27,7 @@ public enum Protocol {
 
     public static Protocol? from_string(string protocol) {
         switch (protocol.up()) {
+            case "INCLUDED": return HTTP1_0;
             case "HTTP/1.0": return HTTP1_0;
             case "HTTP/1.1": return HTTP1_1;
             default: return null;

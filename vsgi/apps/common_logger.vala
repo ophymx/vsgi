@@ -44,12 +44,12 @@ public class CommonLogger : Object, Application, CompositeApp {
         Time now = Time.local((time_t)new DateTime.now_utc().to_unix());
         StringBuilder builder = new StringBuilder();
 
-        builder.append_printf("%s - - [%s] \"%s %s", request.remote_addr,
-            now.format(TIME_FORMAT), request.method.to_string(),
-            request.full_path());
-        if (request.query_string.length != 0)
-            builder.append_printf("?%s", request.query_string);
-        builder.append_printf(" %s\"", request.protocol.to_string());
+        builder.append_printf("%s - - [%s] \"%s %s %s\"",
+                                request.remote_addr,
+                                now.format(TIME_FORMAT),
+                                request.method.to_string(),
+                                request.full_path(),
+                                request.protocol.to_string());
 
         Response response = app.call(request);
 
@@ -64,7 +64,6 @@ public class CommonLogger : Object, Application, CompositeApp {
         log("VSGI.CommonLogger", LogLevelFlags.LEVEL_INFO, "%s", builder.str);
         return response;
     }
-
 }
 
 }
