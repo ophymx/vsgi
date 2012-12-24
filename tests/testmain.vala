@@ -11,6 +11,7 @@ int main (string[] args) {
     tests.add_suite(new CascadeAppTests().get_suite());
     tests.add_suite(new CommonLoggerAppTests().get_suite());
     tests.add_suite(new CompositeStackAppTests().get_suite());
+    tests.add_suite(new EchoAppTests().get_suite());
     tests.add_suite(new FileServerAppTests().get_suite());
     tests.add_suite(new LintAppTests().get_suite());
     tests.add_suite(new MapperAppTests().get_suite());
@@ -19,6 +20,8 @@ int main (string[] args) {
     tests.add_suite(new SuffixMapperAppTests().get_suite());
 
     /* Server */
+    tests.add_suite(new SimpleServerTests().get_suite());
+    tests.add_suite(new FcgiServerTests().get_suite());
 
     return Test.run();
 }

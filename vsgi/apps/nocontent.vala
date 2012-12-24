@@ -37,15 +37,11 @@ public class NoContent : Object, Application {
     }
 
     /**
-     *
+     * Static call so to avoid instantiating an instance.
      */
     public static Response static_call(Request request) {
-        Gee.HashMap<string, string> headers = new Gee.HashMap<string, string>();
-
-        return new Response(204, headers, new Body.empty());
+        return new Response(204);
     }
-
-
 }
 
 }

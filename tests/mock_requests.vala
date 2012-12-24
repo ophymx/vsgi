@@ -11,6 +11,7 @@ VSGI.Request mock_request() {
         "/bar/",
         "foo1=bar1&foo2=bar2",
         "10.0.0.2",
+        42222,
         "10.0.1.2",
         8080,
         VSGI.Protocol.HTTP1_1,

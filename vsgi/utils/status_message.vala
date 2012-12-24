@@ -21,6 +21,10 @@
  */
 namespace VSGI.Utils {
 
+public static bool status_has_entity(uint status) {
+    return (status < 200 || status == 204 || status == 205 || status == 304);
+}
+
 public static string status_message(uint status) {
     switch (status) {
         /* 1XX Info */

@@ -44,6 +44,7 @@ public class Mapper : Object, Application, CompositeApp {
      * * Rethink implementation and use
      */
     public Response call(Request request) {
+        assert(this.app != null);
         string path = request.path_info;
 
         foreach (var entry in apps.entries) {
@@ -57,8 +58,6 @@ public class Mapper : Object, Application, CompositeApp {
                 return app.call(request);
             }
         }
-        if (this.app == null)
-            return NotFound.static_call(request);
         return this.app.call(request);
     }
 }

@@ -31,13 +31,22 @@ public class CompositeStack : Object, Application, CompositeApp {
     private Gee.List<CompositeApp> apps;
     public Application app { get; set; }
 
-    public CompositeStack(Gee.List<CompositeApp>? apps=null) {
+    /**
+     * @param apps List of composite applications to chain
+     * @param app Application that ends the chain
+     */
+    public CompositeStack(Gee.List<CompositeApp>? apps=null,
+        Application? app=null) {
         if (apps == null)
             this.apps = new Gee.ArrayList<CompositeApp>();
         else
-            this.apps = apps;
+            this.apps = (!) apps;
+        this.app = app;
     }
 
+    /**
+     * Add application to the end of the helper chain (not final app)
+     */
     public void add(CompositeApp app) {
         apps.add(app);
     }
@@ -46,6 +55,7 @@ public class CompositeStack : Object, Application, CompositeApp {
      * {@inheritDoc}
      */
     public Response call(Request request) {
+        assert(this.app != null);
         CompositeApp start_app = null;
         CompositeApp current_app = null;
 

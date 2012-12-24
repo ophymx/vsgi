@@ -35,6 +35,9 @@ public errordomain InvalidResponse {
 public class Response : Object {
     private uint _status;
 
+    public signal void headers_sent();
+    public signal void body_sent();
+
     /**
      *
      */
@@ -56,11 +59,17 @@ public class Response : Object {
     /**
      *
      */
-    public Response(uint status, Gee.Map<string, string> headers,
-        Gee.Iterable<Bytes> body) {
+    public Response(uint status, Gee.Map<string, string>? headers=null,
+        Gee.Iterable<Bytes>? body=null) {
         this.status = status;
-        this.headers = headers;
-        this.body = body;
+        if (headers == null)
+            this.headers = new Gee.HashMap<string, string>();
+        else
+            this.headers = (!) headers;
+        if (body == null)
+            this.body = new Body.empty();
+        else
+            this.body = (!) body;
     }
 
     /**
@@ -71,7 +80,7 @@ public class Response : Object {
             throw new InvalidResponse.INVALID_STATUS_CODE(
                 "status code '%u' is invalid".printf(status));
 
-        if (status < 200 | status == 204 | status == 304) {
+        if (Utils.status_has_entity(status)) {
             if (headers.has_key("Content-Type"))
                 throw new InvalidResponse.HAS_CONTENT_TYPE(
                     "Content-Type header must not be set with " +

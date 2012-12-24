@@ -41,11 +41,14 @@ public class CommonLogger : Object, Application, CompositeApp {
      * {@inheritDoc}
      */
     public Response call(Request request) {
+        assert(this.app != null);
         Time now = Time.local((time_t)new DateTime.now_utc().to_unix());
         StringBuilder builder = new StringBuilder();
 
-        builder.append_printf("%s - - [%s] \"%s %s %s\"",
+        builder.append_printf("%s - %s [%s] \"%s %s %s\"",
                                 request.remote_addr,
+                                (request.remote_user.length != 0) ?
+                                    request.remote_user : "-",
                                 now.format(TIME_FORMAT),
                                 request.method.to_string(),
                                 request.full_path(),

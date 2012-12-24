@@ -1,4 +1,4 @@
-public class FcgiServer : VSGI.Server {
+public class VSGI.FcgiServer : VSGI.Server {
 
     protected enum State {
         STOPPED,
@@ -25,7 +25,7 @@ public class FcgiServer : VSGI.Server {
         state = State.STARTING;
         socket_fd = FastCGI.open_socket(socket_path, backlog);
         assert(socket_fd != -1);
-        log("fcgi-server", LogLevelFlags.LEVEL_INFO, "listening on '%s'",
+        log("VSGI.FcgiServer", LogLevelFlags.LEVEL_INFO, "listening on '%s'",
             this.socket_path);
         listen();
     }
@@ -38,22 +38,21 @@ public class FcgiServer : VSGI.Server {
         FastCGI.request request;
         assert(FastCGI.request.init(out request, socket_fd) == 0);
         state = State.RUNNING;
-        while (state = State.RUNNING) {
+        while (state == State.RUNNING) {
             var fail = request.accept() < 0;
             if (fail)
                 break;
             connection_handler(request);
-            request
         }
-        state = State.STOPPING
+        state = State.STOPPING;
         request.close(false);
-        state = State.STOPPED
+        state = State.STOPPED;
         return true;
     }
 
     private bool connection_handler(FastCGI.request request) {
-        ArrayList<string> body = new ArrayList<string>();
-        HashMap<string, string> cgi_env = new HashMap<string, string>();
+        Gee.ArrayList<Bytes> body = new Gee.ArrayList<Bytes>();
+        Gee.HashMap<string, string> cgi_env = new Gee.HashMap<string, string>();
 
         foreach(string param in request.environment.get_all()) {
             string[] cgi_env_pair = param.split("=", 2);
@@ -72,13 +71,10 @@ public class FcgiServer : VSGI.Server {
         VSGI.Request req = new VSGI.Request.from_cgi(cgi_env, body);
         VSGI.Response response = this.app.call(req);
 
-        //stdout.printf("Status: %u\r\n", response.status);
         request.out.printf("Status: %u\r\n", response.status);
         foreach (var header in response.headers.entries) {
-            //stdout.printf("%s: %s\r\n", header.key, header.value);
             request.out.printf("%s: %s\r\n", header.key, header.value);
         }
-        //stdout.printf("\r\n");
         request.out.printf("\r\n");
         foreach (Bytes chunk in response.body) {
             int written = 0;

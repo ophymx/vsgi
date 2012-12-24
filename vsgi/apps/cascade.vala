@@ -31,14 +31,15 @@ public class Cascade : Object, Application {
     public Gee.HashSet<uint> catches { get; private set; }
 
     /**
-     *
+     * @param apps List of applications to cascade through
+     * @param catches return codes to catch and cascade on
      */
     public Cascade(Gee.List<Application>? apps=null,
         uint[] catches = {404, 405}) {
         if (apps == null)
             this.apps = new Gee.ArrayList<Application>();
         else
-            this.apps = apps;
+            this.apps = (!) apps;
 
         this.catches = new Gee.HashSet<uint>();
         foreach(uint status in catches)

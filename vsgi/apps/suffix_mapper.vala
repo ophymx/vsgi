@@ -30,6 +30,10 @@ public class SuffixMapper : Object, Application, CompositeApp {
     public Application app { get; set; }
     private string[] suffixes;
 
+    /**
+     * @param suffixes List of suffixes to attempt to add to request.
+     * @param app Application to add suffixes for in case of 404.
+     */
     public SuffixMapper(string[] suffixes = {
         ".html", "index.hml", "/index.html"}, Application? app=null) {
         this.suffixes = suffixes;
@@ -40,6 +44,7 @@ public class SuffixMapper : Object, Application, CompositeApp {
      * {@inheritDoc}
      */
     public Response call(Request request) {
+        assert(this.app != null);
         Response original_response = app.call(request);
         if (original_response.status != 404)
             return original_response;

@@ -22,12 +22,15 @@
 namespace VSGI {
 
 /**
- *
+ * Application to validate the request coming in and response being returned.
  */
 public class Lint : Object, Application, CompositeApp {
 
     public Application app { set; get; }
 
+    /**
+     * @param app Application to wrapper with validators
+     */
     public Lint(Application? app=null) {
         this.app = app;
     }
@@ -36,11 +39,18 @@ public class Lint : Object, Application, CompositeApp {
      * {@inheritDoc}
      */
     public Response call(Request request) {
-        request.validate();
-        if (app == null)
-            throw new CompositeAppError.NULL_APP("");
+        assert(this.app != null);
+        try {
+            request.validate();
+        } catch (InvalidRequest e) {
+            log("VSGI.Lint", LogLevelFlags.LEVEL_ERROR, "%s", e.message);
+        }
         Response response = app.call(request);
-        response.validate();
+        try {
+            response.validate();
+        } catch (InvalidResponse e) {
+            log("VSGI.Lint", LogLevelFlags.LEVEL_ERROR, "%s", e.message);
+        }
         return response;
     }
 }

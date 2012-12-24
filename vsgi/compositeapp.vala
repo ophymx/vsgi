@@ -21,10 +21,6 @@
  */
 namespace VSGI {
 
-public errordomain CompositeAppError {
-    NULL_APP
-}
-
 /**
  * Implemented by classes that can be chained together.
  */

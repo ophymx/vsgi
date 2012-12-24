@@ -36,6 +36,10 @@ public errordomain InvalidRequest {
  *
  */
 public class Request : Object {
+
+    public signal void headers_recieved();
+    public signal void body_recieved();
+
     /**
      *
      */
@@ -43,11 +47,11 @@ public class Request : Object {
     /**
      *
      */
-    public string script_name { get; set; }
+    public string script_name { get; set; default = ""; }
     /**
      *
      */
-    public string path_info { get; set; }
+    public string path_info { get; set; default = "/"; }
     /**
      *
      */
@@ -56,6 +60,14 @@ public class Request : Object {
      *
      */
     public string remote_addr { get; private set; }
+    /**
+     *
+     */
+    public string remote_user { get; private set; default = ""; }
+    /**
+     *
+     */
+    public uint16 remote_port { get; private set; default = 0; }
     /**
      *
      */
@@ -71,11 +83,11 @@ public class Request : Object {
     /**
      *
      */
-    public Protocol protocol { get; private set; }
+    public Protocol protocol { get; private set; default = Protocol.HTTP1_1; }
     /**
      *
      */
-    public Scheme scheme { get; private set; }
+    public Scheme scheme { get; private set; default = Scheme.HTTP; }
     /**
      *
      */
@@ -103,6 +115,7 @@ public class Request : Object {
                    string path_info,
                    string query_string,
                    string remote_addr,
+                   uint16 remote_port,
                    string server_addr,
                    uint16 server_port,
                    Protocol protocol,
@@ -115,6 +128,7 @@ public class Request : Object {
         this.path_info = path_info;
         this.query_string = query_string;
         this.remote_addr = remote_addr;
+        this.remote_port = remote_port;
         this.server_addr = server_addr;
         this.server_port = server_port;
         this.protocol = protocol;
@@ -197,7 +211,10 @@ public class Request : Object {
      * @return combined path and query_string.
      */
     public string full_path() {
-        return path().concat(query_string);
+        if (query_string.length == 0)
+            return path();
+        else
+            return path().concat("?" + query_string);
     }
 
     /**
@@ -228,21 +245,23 @@ public class Request : Object {
      * @return true if other request equals this request
      */
     public bool equal_to(Request other) {
-        if (method != other.method) return false;
-        if (script_name != other.script_name) return false;
-        if (path_info != other.path_info) return false;
+        if (method       != other.method)       return false;
+        if (script_name  != other.script_name)  return false;
+        if (path_info    != other.path_info)    return false;
         if (query_string != other.query_string) return false;
-        if (remote_addr != other.remote_addr) return false;
-        if (server_addr != other.server_addr) return false;
-        if (server_port != other.server_port) return false;
-        if (protocol != other.protocol) return false;
-        if (scheme != other.scheme) return false;
-        if (!(headers.keys.contains_all(other.headers.keys) &&
-            other.headers.keys.contains_all(headers.keys)))
+        if (remote_addr  != other.remote_addr)  return false;
+        if (server_addr  != other.server_addr)  return false;
+        if (server_port  != other.server_port)  return false;
+        if (protocol     != other.protocol)     return false;
+        if (scheme       != other.scheme)       return false;
+        if (!headers.keys.contains_all(other.headers.keys) ||
+            !other.headers.keys.contains_all(headers.keys)) {
             return false;
+        }
         foreach(string key in headers.keys) {
-            if (headers[key] != other.headers[key])
+            if (headers[key] != other.headers[key]) {
                 return false;
+            }
         }
 
         ByteArray body_data = new ByteArray();
@@ -261,7 +280,6 @@ public class Request : Object {
                 return false;
         }
         return true;
-
     }
 
     /**
@@ -279,10 +297,6 @@ public class Request : Object {
         if (path_info.length == 0 & script_name.length == 0)
             throw new InvalidRequest.MISSING_PATH_AND_SCRIPT_NAME(
                 "either script_name or path_info must be set");
-
-        if (script_name.length == 0 & path_info != "/")
-            throw new InvalidRequest.INVALID_PATH(
-                "path_info must be '/' if script_name is empty");
 
         if (script_name == "/")
             throw new InvalidRequest.INVALID_SCRIPT_NAME(

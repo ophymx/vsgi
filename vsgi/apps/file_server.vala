@@ -28,6 +28,9 @@ public class FileServer : Object, Application {
 
     private string dir;
 
+    /**
+     * @param dir Directory to server files from
+     */
     public FileServer(string dir = "public") {
         this.dir = dir;
     }

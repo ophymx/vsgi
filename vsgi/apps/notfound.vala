@@ -29,12 +29,15 @@ public class NotFound : Object, Application {
     public NotFound() {
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Response call(Request request) {
         return static_call(request);
     }
 
     /**
-     * {@inheritDoc}
+     * Static call to avoid instantiating an instance.
      */
     public static Response static_call(Request request) {
         Gee.HashMap<string, string> headers = new Gee.HashMap<string, string>();

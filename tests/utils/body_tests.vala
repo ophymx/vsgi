@@ -3,7 +3,7 @@ public class BodyTests : Gee.TestCase {
 
     public BodyTests() {
         base("Body");
-        add_test("[Body] ", func);
+        add_test("[Body] ", body_from_string);
     }
 
     protected VSGI.Body test_body;
@@ -16,7 +16,8 @@ public class BodyTests : Gee.TestCase {
         test_body = null;
     }
 
-    public virtual void func() {
+    public virtual void body_from_string() {
+
     }
 
 
