@@ -7,6 +7,7 @@ dash2under = $(shell echo $(1) | tr '-' '_')
 under2dash = $(shell echo $(1) | tr '_' '-')
 
 VER      := $(shell cat VERSION)
+API_VER  := 1.0
 CC       := gcc
 VALAC    := valac
 FLAGS    := --vapidir=vapi --cc=$(CC) --save-temps -X -Ibuild -X -Lbuild \
@@ -16,10 +17,10 @@ RUNENV   := env LD_LIBRARY_PATH="build:${LD_LIBRARY_PATH}"
 
 VSGI_NAME  := Vsgi
 VSGI_PKG_NAME := $(call downcase,$(VSGI_NAME))
-VSGI_PKG   := $(VSGI_PKG_NAME)-$(VER)
+VSGI_PKG   := $(VSGI_PKG_NAME)-$(API_VER)
 
 VSGI_LIB   := build/lib$(VSGI_PKG).so
-VSGI_GIR   := gir-1.0/$(VSGI_NAME)-$(VER).gir
+VSGI_GIR   := gir-1.0/$(VSGI_NAME)-$(API_VER).gir
 VSGI_HDR   := build/$(VSGI_PKG).h
 VSGI_VAPI  := vapi/$(VSGI_PKG).vapi
 
@@ -30,9 +31,9 @@ VSGI_PKG_FLAGS := -X -l$(VSGI_PKG) --pkg $(VSGI_PKG)
 
 FCGI_NAME  := $(VSGI_NAME)ServerFcgi
 FCGI_PKG_NAME := $(call downcase,$(FCGI_NAME))
-FCGI_PKG   := $(VSGI_PKG_NAME)-server-fcgi-$(VER)
+FCGI_PKG   := $(VSGI_PKG_NAME)-server-fcgi-$(API_VER)
 FCGI_LIB   := build/lib$(FCGI_PKG).so
-FCGI_GIR   := gir-1.0/$(FCGI_NAME)-$(VER).gir
+FCGI_GIR   := gir-1.0/$(FCGI_NAME)-$(API_VER).gir
 FCGI_HDR   := build/$(FCGI_PKG).h
 FCGI_VAPI  := vapi/$(FCGI_PKG).vapi
 FCGI_SRC   := $(shell find 'servers/fcgi/lib' -type f -name "*.vala")
@@ -43,9 +44,9 @@ FCGI_PKG_FLAGS := -X -l$(FCGI_PKG) --pkg $(FCGI_PKG)
 
 SIMPLE_NAME  := $(VSGI_NAME)ServerSimple
 SIMPLE_PKG_NAME := $(call downcase,$(SIMPLE_NAME))
-SIMPLE_PKG   := $(VSGI_PKG_NAME)-server-simple-$(VER)
+SIMPLE_PKG   := $(VSGI_PKG_NAME)-server-simple-$(API_VER)
 SIMPLE_LIB   := build/lib$(SIMPLE_PKG).so
-SIMPLE_GIR   := gir-1.0/$(SIMPLE_NAME)-$(VER).gir
+SIMPLE_GIR   := gir-1.0/$(SIMPLE_NAME)-$(API_VER).gir
 SIMPLE_HDR   := build/$(SIMPLE_PKG).h
 SIMPLE_VAPI  := vapi/$(SIMPLE_PKG).vapi
 SIMPLE_SRC   := $(shell find 'servers/simple/lib' -type f -name "*.vala")
@@ -96,7 +97,7 @@ build/tests: $(TEST_SRC) $(LIB)
 
 docs/index.html: $(VSGI_SRC) $(FCGI_SRC) $(SIMPLE_SRC)
 	rm -rf docs
-	valadoc --package-name=$(VSGI_PKG_NAME) --package-version=$(VER) \
+	valadoc --package-name=$(VSGI_PKG_NAME) --package-version=$(API_VER) \
 	    $(PKGS) --pkg for-docs --pkg fcgi --girdir=gir-1.0 --vapidir=vapi \
 	    -o docs $^
 
