@@ -17,11 +17,9 @@ void stdout_logfunc(string? domain, LogLevelFlags levels, string message) {
 }
 
 int main() {
-    stdout.printf("Starting up\n");
     foreach (string domain in LOG_DOMAINS) {
         Log.set_handler(domain, LogLevelFlags.LEVEL_MASK, stdout_logfunc);
     }
-    stdout.printf("Set log handlers\n");
 
     ws = new VSGI.SimpleServer(8080);
     try {
@@ -29,12 +27,10 @@ int main() {
     } catch (VSGI.AppLoadError e) {
         error("%s", e.message);
     }
-    stdout.printf("Initialized Servers\n");
 
     foreach (int signum in STOP_SIGNALS) {
         Posix.signal(signum, (s) => { ws.stop(); });
     }
-    stdout.printf("Handling Signals\n");
 
     ws.start();
     return 0;

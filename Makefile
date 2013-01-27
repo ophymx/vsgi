@@ -101,13 +101,14 @@ docs/index.html: $(VSGI_SRC) $(FCGI_SRC) $(SIMPLE_SRC)
 	    $(PKGS) --pkg for-docs --pkg fcgi --girdir=gir-1.0 --vapidir=vapi \
 	    -o docs $^
 
-build/setup_app.so: lib servers examples/setup_app.vala
+build/setup_app.so: $(VSGI_LIB) $(SIMPLE_LIB) $(FCGI_LIB) \
+    examples/setup_app.vala
 	$(VALAC) $(FLAGS) $(PKGS) $(VSGI_PKG_FLAGS) --library= $(LFLAGS) \
 	    -o $@ examples/setup_app.vala
 	rm .vapi
 
 .PHONY: run
-run: lib build/simple-server build/setup_app.so
+run: build/simple-server build/setup_app.so
 	$(RUNENV) build/simple-server
 
 .PHONY: clean

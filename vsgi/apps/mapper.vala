@@ -39,6 +39,20 @@ public class Mapper : Object, Application, CompositeApp {
     }
 
     /**
+     *
+     */
+    public Application @get(string key) {
+        return apps[key];
+    }
+
+    /**
+     *
+     */
+     public void @set(string key, Application app) {
+        apps[key] = app;
+     }
+
+    /**
      * {@inheritDoc}
      * TODO
      * * Rethink implementation and use
