@@ -23,6 +23,14 @@ public class IterableChunkedBytesTests : Gee.TestCase {
 
     public IterableChunkedBytesTests() {
         base("IterableChunkedBytes");
+        add_test("correctly chunks simple string", () => {
+            var test_stream = new Gee.ArrayList<Bytes>();
+            test_stream.add(new Bytes("foobar".data));
+            test_stream.add(new Bytes("barbaz".data));
+            chunked_bytes = new VSGI.IterableChunkedBytes(test_stream);
+            var body_string = body_to_string(chunked_bytes);
+            assert(body_string == "6\r\nfoobar\r\n6\r\nbarbaz\r\n0\r\n\r\n");
+        });
     }
 
     protected VSGI.IterableChunkedBytes chunked_bytes;

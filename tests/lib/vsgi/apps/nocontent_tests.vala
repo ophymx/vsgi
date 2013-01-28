@@ -23,6 +23,9 @@ public class NoContentAppTests : AppTests {
 
     public NoContentAppTests() {
         base("NoContent");
+        add_test("[NoContent] returns 204 response", () => {
+            assert(test_app.call(test_request).status == 204);
+        });
     }
 
     public override void set_up() {

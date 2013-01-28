@@ -19,3 +19,30 @@
  * Author:
  *      Jeffrey T. Peckham <abic@ophymx.com>
  */
+
+public class SchemeTests : Gee.TestCase {
+
+    public SchemeTests() {
+        base("Scheme");
+        add_test("can lookup Scheme from string", () => {
+            assert(VSGI.Scheme.from_string("HtTp") == VSGI.Scheme.HTTP);
+        });
+        add_test("from_string() returns null for unkown scheme", () => {
+            assert(VSGI.Scheme.from_string("foo") == null);
+        });
+        add_test("can convert Scheme to string", () => {
+            assert(VSGI.Scheme.HTTPS.to_string() == "https");
+        });
+        add_test("can lookup Scheme by port", () => {
+            assert(VSGI.Scheme.from_port(80) == VSGI.Scheme.HTTP);
+        });
+        add_test("from_port() returns null for unknown port", () => {
+            assert(VSGI.Scheme.from_port(8080) == null);
+        });
+        add_test("can get default port for Scheme", () => {
+            assert(VSGI.Scheme.HTTPS.default_port() == 443);
+        });
+
+    }
+
+}

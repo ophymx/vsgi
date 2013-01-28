@@ -32,23 +32,26 @@ public class Mapper : Object, Application, CompositeApp {
     /**
      *
      */
-    public Mapper(Gee.Map<string, Application> apps,
+    public Mapper(Gee.Map<string, Application>? apps=null,
         Application? app=null) {
-        this.apps = apps;
+        if (apps != null)
+            this.apps = apps;
+        else
+            this.apps = new Gee.HashMap<string, Application>();
         this.app = app;
     }
 
     /**
      *
      */
-    public Application @get(string key) {
+    public new Application @get(string key) {
         return apps[key];
     }
 
     /**
      *
      */
-     public void @set(string key, Application app) {
+     public new void @set(string key, Application app) {
         apps[key] = app;
      }
 

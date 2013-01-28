@@ -1,4 +1,4 @@
-/* tests/lib/vsgi/utils/status_message_tests.vala
+/* tests/lib/vsgi/utils/status_tests.vala
  *
  * Copyright (C) 2012 Jeffrey T. Peckham
  *
@@ -19,3 +19,20 @@
  * Author:
  *      Jeffrey T. Peckham <abic@ophymx.com>
  */
+
+public class StatusTests : Gee.TestCase {
+
+    public StatusTests() {
+        base("status functions");
+        add_test("can lookup status messages from codes", () => {
+            assert(VSGI.Utils.status_message(405) == "Method Not Allowed");
+        });
+        add_test("can test status code 204 should not have entity", () => {
+            assert(!VSGI.Utils.status_has_entity(204));
+        });
+        add_test("can test status code 403 should have entity", () => {
+            assert(VSGI.Utils.status_has_entity(403));
+        });
+    }
+
+}

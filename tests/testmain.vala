@@ -34,8 +34,13 @@ int main (string[] args) {
 
     /* Utils */
     TestSuite utils_tests = new TestSuite("Utils");
+    utils_tests.add_suite(new BodyTests().get_suite());
     utils_tests.add_suite(new IterableByteStreamTests().get_suite());
     utils_tests.add_suite(new IterableChunkedBytesTests().get_suite());
+    utils_tests.add_suite(new MethodTests().get_suite());
+    utils_tests.add_suite(new ProtocolTests().get_suite());
+    utils_tests.add_suite(new SchemeTests().get_suite());
+    utils_tests.add_suite(new StatusTests().get_suite());
     tests.add_suite(utils_tests);
 
     /* Applications */

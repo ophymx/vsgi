@@ -80,7 +80,7 @@ public class Response : Object {
             throw new InvalidResponse.INVALID_STATUS_CODE(
                 "status code '%u' is invalid".printf(status));
 
-        if (Utils.status_has_entity(status)) {
+        if (!Utils.status_has_entity(status)) {
             if (headers.has_key("Content-Type"))
                 throw new InvalidResponse.HAS_CONTENT_TYPE(
                     "Content-Type header must not be set with " +

@@ -19,3 +19,25 @@
  * Author:
  *      Jeffrey T. Peckham <abic@ophymx.com>
  */
+
+public class ProtocolTests : Gee.TestCase {
+
+    public ProtocolTests() {
+        base("Protocol");
+        add_test("can lookup Protocol from string", () => {
+            assert(VSGI.Protocol.from_string("HTTP/1.1") ==
+                VSGI.Protocol.HTTP1_1);
+        });
+        add_test("Protocol 'INCLUDED' returns HTTP 1.0", () => {
+            assert(VSGI.Protocol.from_string("INCLUDED") ==
+                VSGI.Protocol.HTTP1_0);
+        });
+        add_test("from_string() returns null for unkown protocol", () => {
+            assert(VSGI.Protocol.from_string("foo") == null);
+        });
+        add_test("can convert Protocol to string", () => {
+            assert(VSGI.Protocol.HTTP1_0.to_string() == "HTTP/1.0");
+        });
+    }
+
+}

@@ -30,11 +30,7 @@ public class FileServerAppTests : AppTests {
             var test_response = test_app.call(test_request);
             assert(test_response.status == 200);
             assert(test_response.headers["Content-Length"] == "13");
-            /* Using slice here to make a test go green, :(
-             * will be fixed when using glib-2.34 and InputStream.read_bytes()
-             */
-            var body_string = body_to_string(test_response.body).slice(0,
-                test_response.headers["Content-Length"].to_int());
+            var body_string = body_to_string(test_response.body);
             assert(body_string.length == 13);
             assert(body_string == "Hello World!\n");
         });

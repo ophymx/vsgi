@@ -19,3 +19,20 @@
  * Author:
  *      Jeffrey T. Peckham <abic@ophymx.com>
  */
+
+public class MethodTests : Gee.TestCase {
+
+    public MethodTests() {
+        base("Method");
+        add_test("can lookup Method from string", () => {
+            assert(VSGI.Method.from_string("get") == VSGI.Method.GET);
+        });
+        add_test("from_string() returns null for unkown method name", () => {
+            assert(VSGI.Method.from_string("foo") == null);
+        });
+        add_test("can convert Method to string", () => {
+            assert(VSGI.Method.OPTIONS.to_string() == "OPTIONS");
+        });
+    }
+
+}

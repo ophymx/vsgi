@@ -23,12 +23,15 @@ public class MapperAppTests : CompositeAppTests {
 
     public MapperAppTests() {
         base("Mapper");
+
     }
+
+    protected Gee.Map<string, VSGI.Application> test_map;
 
     public override void set_up() {
         base.set_up();
-        var map = new Gee.HashMap<string, VSGI.Application>();
-        test_compositeapp = new VSGI.Mapper(map);
+        test_map = new Gee.HashMap<string, VSGI.Application>();
+        test_compositeapp = new VSGI.Mapper();
     }
 
 

@@ -1,4 +1,4 @@
-/* lib/vsgi/utils/status_message.vala
+/* lib/vsgi/utils/status.vala
  *
  * Copyright (C) 2012 Jeffrey T. Peckham
  *
@@ -22,7 +22,7 @@
 namespace VSGI.Utils {
 
 public static bool status_has_entity(uint status) {
-    return (status < 200 || status == 204 || status == 205 || status == 304);
+    return (!(status < 200 || status == 204 || status == 205 || status == 304));
 }
 
 public static string status_message(uint status) {

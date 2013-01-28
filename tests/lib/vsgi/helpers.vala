@@ -48,7 +48,11 @@ string body_to_string(Gee.Iterable<Bytes> body) {
     foreach(Bytes chunk in body) {
         buf.append(chunk.get_data());
     }
-    return (string) buf.data;
+
+    uint8[] data = buf.data;
+    data += 0;
+
+    return (string) data;
 }
 
 public class MockRequest {
