@@ -1,4 +1,4 @@
-/* apps/suffix_mapper.vala
+/* lib/vsgi/apps/suffix_mapper.vala
  *
  * Copyright (C) 2012 Jeffrey T. Peckham
  *

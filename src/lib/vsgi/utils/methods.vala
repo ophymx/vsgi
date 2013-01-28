@@ -1,4 +1,4 @@
-/* utils/methods.vala
+/* lib/vsgi/utils/methods.vala
  *
  * Copyright (C) 2012 Jeffrey T. Peckham
  *

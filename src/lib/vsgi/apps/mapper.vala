@@ -1,4 +1,4 @@
-/* apps/mapper.vala
+/* lib/vsgi/apps/mapper.vala
  *
  * Copyright (C) 2012 Jeffrey T. Peckham
  *

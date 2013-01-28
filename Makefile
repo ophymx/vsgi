@@ -15,9 +15,7 @@ FLAGS  := --vapidir=vapi --vapidir=$(VAPIDIR) \
 	--girdir=gir-1.0 --girdir=$(GIRDIR) \
 	--cc=$(CC) --save-temps --verbose
 
-#	-X -I$(INCLUDE_DIR) -X -L$(LIBDIR) \
-
-PKG_CONFIG = env PKG_CONFIG_PATH="$(PKG_CONFIG_DIR):$(PKG_CONFIG_PATH)"
+PKG_CONFIG = PKG_CONFIG_PATH="$(PKG_CONFIG_DIR):$(PKG_CONFIG_PATH)"
 
 LFLAGS := -X -fPIC -X -shared
 
@@ -109,10 +107,11 @@ TEST_SRC = $(shell find 'tests/' -type f -name "*.vala")
 build/tests: $(LIBS) $(TEST_SRC)
 	$(PKG_CONFIG) $(VALAC) $(FLAGS) $(call get_deps,'tests') -o $@ $(TEST_SRC)
 
-docs/index.html: $(call get_src,'src')
+docs/index.html: $(call get_src,'src/lib')
 	rm -rf docs
 	valadoc --package-name=$(VSGI_PKG_NAME) --package-version=$(API_VER) \
-	    $(PKGS) --pkg for-docs --pkg fcgi  \
+	    --vapidir=vapi --vapidir=$(VAPIDIR) \
+	    $(call get_deps,'src/lib/vsgi') --pkg for-docs --pkg fcgi  \
 	    -o docs $^
 
 $(LIBDIR)/setup_app.so: $(LIBDIR)/libvsgi.so examples/setup_app.vala

@@ -1,4 +1,4 @@
-/* utils/status_message.vala
+/* lib/vsgi/utils/status_message.vala
  *
  * Copyright (C) 2012 Jeffrey T. Peckham
  *

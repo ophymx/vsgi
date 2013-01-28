@@ -1,4 +1,4 @@
-/* apps/echo.vala
+/* lib/vsgi/apps/echo.vala
  *
  * Copyright (C) 2012 Jeffrey T. Peckham
  *

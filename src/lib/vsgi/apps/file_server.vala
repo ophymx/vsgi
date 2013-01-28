@@ -1,4 +1,4 @@
-/* apps/file_server.vala
+/* lib/vsgi/apps/file_server.vala
  *
  * Copyright (C) 2012 Jeffrey T. Peckham
  *

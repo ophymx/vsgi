@@ -1,4 +1,4 @@
-/* request.vala
+/* lib/vsgi/request.vala
  *
  * Copyright (C) 2012 Jeffrey T. Peckham
  *
@@ -129,6 +129,7 @@ public class Request : Object {
         this.query_string = query_string;
         this.remote_addr = remote_addr;
         this.remote_port = remote_port;
+        this.remote_user = "";
         this.server_addr = server_addr;
         this.server_port = server_port;
         this.protocol = protocol;

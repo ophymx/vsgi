@@ -1,4 +1,4 @@
-/* response.vala
+/* lib/vsgi/response.vala
  *
  * Copyright (C) 2012 Jeffrey T. Peckham
  *

@@ -1,4 +1,4 @@
-/* utils/body.vala
+/* lib/vsgi/utils/body.vala
  *
  * Copyright (C) 2012 Jeffrey T. Peckham
  *

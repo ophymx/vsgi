@@ -4,6 +4,7 @@ public class Bytes {
     public Bytes(uint8[] data);
     public size_t length;
     public uint8[] get_data();
+    public size_t get_size ();
 }
 
 [Compact]

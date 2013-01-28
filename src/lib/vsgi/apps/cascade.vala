@@ -1,4 +1,4 @@
-/* apps/cascade.vala
+/* lib/vsgi/apps/cascade.vala
  *
  * Copyright (C) 2012 Jeffrey T. Peckham
  *
@@ -50,14 +50,14 @@ public class Cascade : Object, Application {
      * {@inheritDoc}
      */
     public Response call(Request request) {
-        Response response = NotFound.static_call(request);
+        Response default_response = NotFound.static_call(request);
 
         foreach (Application app in apps){
-            response = app.call(request);
+            Response response = app.call(request);
             if (!catches.contains(response.status))
                 return response;
         }
-        return response;
+        return default_response;
     }
 }
 

@@ -1,4 +1,4 @@
-/* utils/iterable_byte_stream.vala
+/* lib/vsgi/utils/iterable_byte_stream.vala
  *
  * Copyright (C) 2012 Jeffrey T. Peckham
  *
@@ -51,30 +51,29 @@ public class ByteStreamIter : Object, Gee.Iterator<Bytes> {
     private const int BUFFER_SIZE = 65536;
 
     private InputStream input_stream;
-    private size_t current_chunk_size = 0;
-    private size_t next_chunk_size = 0;
     private size_t collected = 0;
-    private uint8[] current_chunk = new uint8[BUFFER_SIZE];
-    private uint8[] next_chunk = new uint8[BUFFER_SIZE];
+    private Bytes current_chunk;
+    private Bytes next_chunk;
 
     /**
      *
      */
     public ByteStreamIter(InputStream input_stream) {
         this.input_stream = input_stream;
+        current_chunk = new Bytes({});
+        next_chunk = new Bytes({});
     }
 
     public bool next() {
         current_chunk = next_chunk;
-        current_chunk_size = next_chunk_size;
         try {
-            next_chunk_size = input_stream.read(next_chunk);
-            collected += next_chunk_size;
+            next_chunk = input_stream.read_bytes(BUFFER_SIZE);
+            collected += next_chunk.get_size();
         } catch(Error e) {
             log("vsgi", LogLevelFlags.LEVEL_ERROR, "%s", e.message);
         }
-        if (current_chunk_size < 1) {
-            if (next_chunk_size < 1 ) {
+        if (current_chunk.get_size() <= 0) {
+            if (next_chunk.get_size() <= 0 ) {
                 try {
                     input_stream.close();
                 } catch(Error e) {
@@ -91,11 +90,11 @@ public class ByteStreamIter : Object, Gee.Iterator<Bytes> {
                 return false;
             }
         }
-        return (current_chunk_size > 0);
+        return (current_chunk.get_size() > 0);
     }
 
     public bool has_next() {
-        return (next_chunk_size > 0);
+        return (next_chunk.get_size() > 0);
     }
 
     public bool first() {
@@ -103,10 +102,7 @@ public class ByteStreamIter : Object, Gee.Iterator<Bytes> {
     }
 
     public new Bytes get() {
-        if (current_chunk_size != BUFFER_SIZE)
-            return new Bytes(current_chunk[0:current_chunk_size]);
-        else
-            return new Bytes(current_chunk);
+        return current_chunk;
     }
 
     public void remove() {

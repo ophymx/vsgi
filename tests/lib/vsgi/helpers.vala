@@ -1,4 +1,4 @@
-/* lib/vsgi/apps/notfound.vala
+/* tests/lib/vsgi/helpers.vala
  *
  * Copyright (C) 2012 Jeffrey T. Peckham
  *
@@ -19,37 +19,40 @@
  * Author:
  *      Jeffrey T. Peckham <abic@ophymx.com>
  */
-namespace VSGI {
+VSGI.Request mock_request() {
+    Gee.HashMap<string, string> headers = new Gee.HashMap<string, string>();
+    headers["User-Agent"] = "Mock Agent";
+    headers["Host"] = "myhost";
+    headers["Accept"] = "*/*";
 
-/**
- * Simply returns a 404 Not Found response.
- */
-public class NotFound : Object, Application {
-
-    public NotFound() {
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Response call(Request request) {
-        return static_call(request);
-    }
-
-    /**
-     * Static call to avoid instantiating an instance.
-     */
-    public static Response static_call(Request request) {
-        Gee.HashMap<string, string> headers = new Gee.HashMap<string, string>();
-
-        string message = "Not Found: '%s'\r\n".printf(request.full_path());
-
-        Body body = new Body.from_string(message);
-        headers["Content-Type"] = "text/plain";
-        headers["Content-Length"] = message.length.to_string();
-
-        return new Response(404, headers, body);
-    }
+    VSGI.Body body = new VSGI.Body.empty();
+    return new VSGI.Request(
+        VSGI.Method.GET,
+        "/foo",
+        "/bar/",
+        "foo1=bar1&foo2=bar2",
+        "10.0.0.2",
+        42222,
+        "10.0.1.2",
+        8080,
+        VSGI.Protocol.HTTP1_1,
+        VSGI.Scheme.HTTP,
+        headers,
+        body
+    );
 }
 
+string body_to_string(Gee.Iterable<Bytes> body) {
+    ByteArray buf = new ByteArray();
+
+    foreach(Bytes chunk in body) {
+        buf.append(chunk.get_data());
+    }
+    return (string) buf.data;
+}
+
+public class MockRequest {
+    public MockRequest() {
+
+    }
 }

@@ -1,4 +1,4 @@
-/* lib/vsgi/apps/notfound.vala
+/* tests/lib/vsgi/utils/iterable_chunked_bytes_tests.vala
  *
  * Copyright (C) 2012 Jeffrey T. Peckham
  *
@@ -19,37 +19,19 @@
  * Author:
  *      Jeffrey T. Peckham <abic@ophymx.com>
  */
-namespace VSGI {
+public class IterableChunkedBytesTests : Gee.TestCase {
 
-/**
- * Simply returns a 404 Not Found response.
- */
-public class NotFound : Object, Application {
-
-    public NotFound() {
+    public IterableChunkedBytesTests() {
+        base("IterableChunkedBytes");
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public Response call(Request request) {
-        return static_call(request);
+    protected VSGI.IterableChunkedBytes chunked_bytes;
+
+    public override void set_up() {
     }
 
-    /**
-     * Static call to avoid instantiating an instance.
-     */
-    public static Response static_call(Request request) {
-        Gee.HashMap<string, string> headers = new Gee.HashMap<string, string>();
-
-        string message = "Not Found: '%s'\r\n".printf(request.full_path());
-
-        Body body = new Body.from_string(message);
-        headers["Content-Type"] = "text/plain";
-        headers["Content-Length"] = message.length.to_string();
-
-        return new Response(404, headers, body);
+    public override void tear_down() {
+        chunked_bytes = null;
     }
-}
 
 }

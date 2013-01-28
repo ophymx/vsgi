@@ -1,4 +1,4 @@
-/* apps/common_logger.vala
+/* lib/vsgi/apps/common_logger.vala
  *
  * Copyright (C) 2012 Jeffrey T. Peckham
  *
@@ -47,7 +47,8 @@ public class CommonLogger : Object, Application, CompositeApp {
 
         builder.append_printf("%s - %s [%s] \"%s %s %s\"",
                                 request.remote_addr,
-                                (request.remote_user.length != 0) ?
+                                (request.remote_user != null &&
+                                    request.remote_user.length != 0) ?
                                     request.remote_user : "-",
                                 now.format(TIME_FORMAT),
                                 request.method.to_string(),

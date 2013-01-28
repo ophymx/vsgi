@@ -1,0 +1,14 @@
+language: c # vala
+compiler:
+  - gcc
+  - clang
+before_install:
+  - echo "yes" | sudo add-apt-repository ppa:vala-team/ppa
+  - sudo apt-get update -qq
+before_script:
+  - git clone https://github.com/sstephenson/bats.git
+install: ./ci_install.sh
+script: ./ci_build.sh
+env:
+  - VALAC=valac-0.18
+

@@ -1,4 +1,4 @@
-/* utils/iterable_chunked_bytes.vala
+/* lib/vsgi/utils/iterable_chunked_bytes.vala
  *
  * Copyright (C) 2012 Jeffrey T. Peckham
  *
