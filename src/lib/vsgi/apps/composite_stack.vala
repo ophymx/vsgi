@@ -28,8 +28,21 @@ namespace VSGI {
  */
 public class CompositeStack : Object, Application, CompositeApp {
 
+
+
     private Gee.List<CompositeApp> apps;
-    public Application app { get; set; }
+    private CompositeApp top;
+    private CompositeApp bottom;
+    private Application _app;
+    public Application app {
+        get {
+            return this._app;
+        }
+        set {
+            this._app = value;
+            restack();
+        }
+    }
 
     /**
      * @param apps List of composite applications to chain
@@ -49,6 +62,24 @@ public class CompositeStack : Object, Application, CompositeApp {
      */
     public void add(CompositeApp app) {
         apps.add(app);
+        restack();
+    }
+
+    private void restack() {
+        top = null;
+        bottom = null;
+
+        foreach(CompositeApp app in apps) {
+            if (top == null) {
+                top = app;
+                bottom = app;
+            } else {
+                bottom.app = app;
+                bottom = app;
+            }
+        }
+        if ( bottom != null )
+            bottom.app = this.app;
     }
 
     /**
@@ -56,24 +87,12 @@ public class CompositeStack : Object, Application, CompositeApp {
      */
     public Response call(Request request) {
         assert(this.app != null);
-        CompositeApp start_app = null;
-        CompositeApp current_app = null;
 
-        foreach(CompositeApp app in apps) {
-            if (start_app == null) {
-                start_app = app;
-                current_app = app;
-            } else {
-                current_app.app = app;
-                current_app = app;
-            }
-        }
-        if (start_app == null) {
+        if (top == null) {
             return this.app.call(request);
         }
-        current_app.app = this.app;
 
-        return start_app.call(request);
+        return top.call(request);
     }
 }
 

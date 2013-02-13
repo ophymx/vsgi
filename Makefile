@@ -123,6 +123,10 @@ $(LIBDIR)/setup_app.so: $(LIBDIR)/libvsgi.so examples/setup_app.vala
 run: $(BINDIR)/vsgi-server-simple $(LIBDIR)/setup_app.so
 	$(RUNENV) $(BINDIR)/vsgi-server-simple
 
+.PHONY: context
+context:
+	env $(RUNENV) bash -i
+
 .PHONY: clean
 SRC = $(call get_src,'src') $(call get_src,'tests') $(call get_src,'examples')
 clean:
