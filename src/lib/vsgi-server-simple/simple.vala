@@ -162,6 +162,46 @@ public class VSGI.SimpleServer : VSGI.Server {
         return true;
     }
 
+    private bool parse_request_line(string request_line,
+                                out VSGI.Method method,
+                                out VSGI.Protocol protocol,
+                                out string path,
+                                out string query_string)
+                                    throws ParseRequestError {
+
+        string[] req = request_line.split(" ");
+        VSGI.Method? _method = VSGI.Method.from_string(req[0]);
+        /* Invalid Method */
+        if (_method == null) {
+            throw new ParseRequestError.UNSUPPORTED_METHOD(
+                "Unsupported HTTP Method '%s'", req[0]);
+        }
+        method = (!) _method;
+
+        /* Invalid Protocol */
+        VSGI.Protocol? _protocol = VSGI.Protocol.from_string(req[2]);
+        if (_protocol == null) {
+            throw new ParseRequestError.UNSUPPORTED_PROTOCOL(
+                "Unsupported HTTP Protocol version '%s'", req[2]);
+        }
+        protocol = (!) _protocol;
+
+        string[] url = req[1].split("?", 2);
+
+        string? _path = Uri.unescape_string(url[0]);
+        /* Invalid Path */
+        if (_path == null) {
+            throw new ParseRequestError.INVALID_URL(
+              "Invalid request url '%s'", url[0]);
+        }
+        path = (!) _path;
+
+        string? _query_string = Uri.unescape_string(url[1]);
+        query_string = (_query_string == null) ? "" : (!) _query_string;
+
+        return true;
+    }
+
     private bool connection_handler(SocketConnection conn) {
         /* Get Connection Info */
         string script_name = "";
@@ -200,38 +240,34 @@ public class VSGI.SimpleServer : VSGI.Server {
             if (size == 0)
                 continue;
 
-            string[] req = req_line.split(" ");
-            VSGI.Method? method = VSGI.Method.from_string(req[0]);
-            /* Invalid Method */
-            if (method == null) {
-                send_response(output, new Response(405));
-                continue;
-            }
-            /* Invalid Protocol */
-            VSGI.Protocol? protocol = VSGI.Protocol.from_string(req[2]);
-            if (protocol == null) {
-                send_response(output, new Response(505));
-                continue;
+            /* Parse Request (first line) */
+            VSGI.Method method;
+            VSGI.Protocol protocol;
+            string path_info;
+            string query_string;
+
+            try {
+                parse_request_line(req_line, out method, out protocol,
+                    out path_info, out query_string);
+            } catch(ParseRequestError e) {
+                uint status_code = 500;
+                if (e is ParseRequestError.UNSUPPORTED_METHOD)
+                    status_code = 405;
+                if (e is ParseRequestError.UNSUPPORTED_PROTOCOL)
+                    status_code = 505;
+                if (e is ParseRequestError.INVALID_URL)
+                    status_code = 400;
+                send_response(output,
+                    new Response.simple(status_code, e.message + "\r\n"));
+                break;
             }
 
-            string[] resource = req[1].split("?", 2);
-            string? path_info = Uri.unescape_string(resource[0]);
-            string? query_string = Uri.unescape_string(resource[1]);
-            /* Invalid Path */
-            if (path_info == null) {
-                send_response(output, new Response(400));
-                continue;
-            }
-            if (query_string == null) {
-                query_string = "";
-            }
-
-            /* Parse Headers */
+            /* Parse Request Headers */
             Gee.Map<string, string> headers = parse_headers(input);
 
             bool connection_close = (headers["Connection"] == "close");
 
-            /* Form Request */
+            /* Form Internal Request */
             VSGI.IterableByteStream body = new VSGI.IterableByteStream(input);
             VSGI.Request request = new VSGI.Request(method, script_name,
                 path_info, query_string, remote_addr, remote_port, server_addr,

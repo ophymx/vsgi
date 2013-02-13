@@ -31,6 +31,12 @@ public errordomain AppLoadError {
     SETUP_RETURNED_NULL
 }
 
+public errordomain ParseRequestError {
+    UNSUPPORTED_METHOD,
+    UNSUPPORTED_PROTOCOL,
+    INVALID_URL
+}
+
 /**
  *
  */

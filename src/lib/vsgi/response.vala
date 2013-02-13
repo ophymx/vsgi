@@ -72,6 +72,15 @@ public class Response : Object {
             this.body = (!) body;
     }
 
+    public Response.simple(uint status, string body) {
+        this.status = status;
+        this.headers = new Gee.HashMap<string, string>();
+        this.body = new Body.from_string(body);
+
+        headers["Content-Type"] = "text/plain";
+        headers["Content-Length"] = body.length.to_string();
+    }
+
     /**
      *
      */
