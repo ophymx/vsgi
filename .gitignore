@@ -4,3 +4,5 @@ build
 public
 config.ru
 docs
+.lock*
+.waf-*

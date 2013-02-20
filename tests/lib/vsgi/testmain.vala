@@ -62,10 +62,12 @@ int main (string[] args) {
     app_tests.add_suite(composite_tests);
 
     /* Server */
+    /*
     TestSuite server_tests = new TestSuite("Servers");
     server_tests.add_suite(new SimpleServerTests().get_suite());
     server_tests.add_suite(new FcgiServerTests().get_suite());
     tests.add_suite(server_tests);
+    */
 
 
     return Test.run();
