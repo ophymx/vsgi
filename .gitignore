@@ -1,8 +1,5 @@
 *.swp
-*.c
-build
-public
-config.ru
-docs
 .lock*
 .waf-*
+build
+docs
