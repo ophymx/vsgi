@@ -12,4 +12,4 @@ install: ./ci_install.sh
 script: ./ci_build.sh
 env:
   - VALAC=valac-0.18
-
+  - VALAC=valac-0.16

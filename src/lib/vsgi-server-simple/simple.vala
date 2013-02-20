@@ -74,7 +74,7 @@ public class VSGI.SimpleServer : VSGI.Server {
         string req_line = "";
         size_t size = 0;
         try {
-             req_line = input.read_line_utf8(out size);
+             req_line = input.read_line(out size);
         } catch(Error e) {
             log("VSGI.SimpleServer", LogLevelFlags.LEVEL_WARNING, "%s",
                 e.message);
@@ -83,7 +83,7 @@ public class VSGI.SimpleServer : VSGI.Server {
             string[] header = req_line.split(": ", 2);
             headers[header[0]] = header[1];
             try {
-                 req_line= input.read_line_utf8(out size);
+                 req_line= input.read_line(out size);
             } catch(Error e) {
                 log("VSGI.SimpleServer", LogLevelFlags.LEVEL_WARNING, "%s",
                     e.message);
@@ -227,7 +227,7 @@ public class VSGI.SimpleServer : VSGI.Server {
 
             /* Parse Initial Request */
             try {
-                req_line = input.read_line_utf8(out size);
+                req_line = input.read_line(out size);
             } catch(Error e) {
                 log("VSGI.SimpleServer", LogLevelFlags.LEVEL_WARNING, "%s",
                     e.message);
