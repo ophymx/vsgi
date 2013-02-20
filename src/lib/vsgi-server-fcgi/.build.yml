@@ -1,7 +1,0 @@
----
-gir_name: VsgiServerFcgi
-packages:
-  internal:
-  - vsgi-1.0
-  external:
-  - fcgi

@@ -1,4 +1,0 @@
-packages:
-  internal:
-  - vsgi-1.0
-  - vsgi-server-simple-1.0
