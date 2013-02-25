@@ -123,9 +123,23 @@ def build(bld):
             vapi_dirs = vapi_dirs,
             uselib = external_pkgs,
             packages = external_pkgs,
+            install_path = False,
             use = internal_pkgs)
 
 def test(ctx):
-    pass
+    import os
+    from waflib import Errors
+
+    out_dir = out
+
+    env = { 'LD_LIBRARY_PATH': out }
+
+    lib_tests = [t for t in os.listdir('tests/lib') if not t.startswith('.')]
+    for test in lib_tests:
+        command = '%s/lib%s_TESTS' % (out_dir, test)
+        if ctx.exec_command(command, env=env) != 0:
+            raise Errors.WafError('Tests failed')
+
+
 
 # vim: set ft=python sw=4 sts=4 et:
