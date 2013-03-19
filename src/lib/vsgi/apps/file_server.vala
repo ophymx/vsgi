@@ -43,8 +43,14 @@ public class FileServer : Object, Application {
         IterableByteStream body;
 
         try {
+            bool results_uncertain;
             string filename = Path.build_filename(dir, request.path_info);
-            headers["Content-Type"] = "text/plain";
+            string content_type = ContentType.guess(filename, null,
+                out results_uncertain);
+            if (results_uncertain)
+                headers["Content-Type"] = "text/plain";
+            else
+                headers["Content-Type"] = content_type;
 
             File file = File.new_for_path(filename);
             FileInfo file_info = file.query_info("*", FileQueryInfoFlags.NONE);

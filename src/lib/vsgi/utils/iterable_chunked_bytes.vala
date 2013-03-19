@@ -54,9 +54,6 @@ public class ChunkedBytesIter : Object, Gee.Iterator<Bytes> {
         FINISHED
     }
 
-    private const uint8[] CRLF = {'\r', '\n'};
-    private const uint8[] ZERO = {'0'};
-
     private Gee.Iterator<Bytes> chunks_iter;
     private State state = State.PROCESSING;
 
