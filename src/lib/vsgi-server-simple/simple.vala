@@ -233,11 +233,9 @@ public class VSGI.SimpleServer : VSGI.Server {
                     e.message);
                 break;
             }
-            /* Connection Closed */
-            if (req_line == null)
+            if (req_line == null) /* Connection Closed */
                 break;
-            /* Blank Line */
-            if (size == 0)
+            if (size == 0) /* Blank Line */
                 continue;
 
             /* Parse Request (first line) */

@@ -55,7 +55,7 @@ public class Request : Object {
     /**
      *
      */
-    public string query_string { get; private set; }
+    public string query_string { get; private set; default = ""; }
     /**
      *
      */
@@ -192,8 +192,8 @@ public class Request : Object {
                     this.server_software = val;
                     break;
                 default:
-                    if (cgi_var.key.index_of("HTTP_") == 0)
-                        headers[key[5:key.length]] = val;
+                    if (cgi_var.key.has_prefix("HTTP_"))
+                        headers[Utils.cgi_var_to_header(cgi_var.key)] = val;
                     break;
             }
         }
