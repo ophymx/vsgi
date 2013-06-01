@@ -24,7 +24,6 @@ public class FileServerAppTests : AppTests {
     public FileServerAppTests() {
         base("FileServer");
         add_test("returns output of file as response body", () => {
-            test_app = new VSGI.FileServer(ASSETS_DIR);
             test_request.path_info = "/test_file.txt";
             test_request.script_name = "";
             var test_response = test_app.call(test_request);
@@ -35,14 +34,12 @@ public class FileServerAppTests : AppTests {
             assert(body_string == "Hello World!\n");
         });
         add_test("sets correct content type based on filename", () => {
-            test_app = new VSGI.FileServer(ASSETS_DIR);
             test_request.path_info = "/test_file.html";
             test_request.script_name = "";
             var test_response = test_app.call(test_request);
             assert(test_response.headers["Content-Type"] == "text/html");
         });
         add_test("uses content type text plain for unknown extension", () => {
-            test_app = new VSGI.FileServer(ASSETS_DIR);
             test_request.path_info = "/test_file";
             test_request.script_name = "";
             var test_response = test_app.call(test_request);
@@ -52,7 +49,7 @@ public class FileServerAppTests : AppTests {
 
     public override void set_up() {
         base.set_up();
-        test_app = new VSGI.FileServer("/tmp");
+        test_app = new VSGI.FileServer(ASSETS_DIR);
     }
 
 }
