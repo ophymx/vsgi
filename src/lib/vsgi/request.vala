@@ -287,15 +287,15 @@ public class Request : Object {
      *
      */
     public bool validate() throws InvalidRequest {
-        if (script_name.length > 0 & script_name[0] != '/' )
+        if (script_name.length > 0 && !script_name.has_prefix("/"))
             throw new InvalidRequest.INVALID_SCRIPT_NAME(
                 "script_name must begin with a '/'");
 
-        if (path_info.length > 0 & path_info[0] != '/')
+        if (path_info.length > 0 && !path_info.has_prefix("/"))
             throw new InvalidRequest.INVALID_PATH(
                 "path_info must begin with a '/'");
 
-        if (path_info.length == 0 & script_name.length == 0)
+        if (path_info.length == 0 && script_name.length == 0)
             throw new InvalidRequest.MISSING_PATH_AND_SCRIPT_NAME(
                 "either script_name or path_info must be set");
 

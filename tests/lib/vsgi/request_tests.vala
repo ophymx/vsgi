@@ -45,6 +45,7 @@ public class RequestTests : Gee.TestCase {
                 assert_not_reached();
             } catch (VSGI.InvalidRequest e) {
                 assert(e is VSGI.InvalidRequest.INVALID_SCRIPT_NAME);
+                assert(e.message == "script_name must begin with a '/'");
             }
         });
         add_test("validate() raises error when " +
@@ -55,6 +56,7 @@ public class RequestTests : Gee.TestCase {
                 assert_not_reached();
             } catch (VSGI.InvalidRequest e) {
                 assert(e is VSGI.InvalidRequest.INVALID_PATH);
+                assert(e.message == "path_info must begin with a '/'");
             }
         });
         add_test("validate() raises error when " +
@@ -66,6 +68,8 @@ public class RequestTests : Gee.TestCase {
                 assert_not_reached();
             } catch (VSGI.InvalidRequest e) {
                 assert(e is VSGI.InvalidRequest.MISSING_PATH_AND_SCRIPT_NAME);
+                assert(e.message == "either script_name or path_info must be " +
+                                    "set");
             }
         });
         add_test("validate() raises error when " +
@@ -76,6 +80,8 @@ public class RequestTests : Gee.TestCase {
                 assert_not_reached();
             } catch (VSGI.InvalidRequest e) {
                 assert(e is VSGI.InvalidRequest.INVALID_SCRIPT_NAME);
+                assert(e.message == "script_name must not be '/' but instead " +
+                                    "be empty");
             }
         });
         add_test("validate() raises error when " +
@@ -86,6 +92,8 @@ public class RequestTests : Gee.TestCase {
                 assert_not_reached();
             } catch (VSGI.InvalidRequest e) {
                 assert(e is VSGI.InvalidRequest.INVALID_CONTENT_LENGTH);
+                assert(e.message == "Content-Length header must only consist " +
+                                    "of digits");
             }
         });
     }

@@ -31,6 +31,7 @@ public class ResponseTests : Gee.TestCase {
                     assert_not_reached();
                 } catch (VSGI.InvalidResponse e) {
                     assert(e is VSGI.InvalidResponse.INVALID_STATUS_CODE);
+                    assert(e.message == "status code '80' is invalid");
                 }
             });
 
@@ -42,9 +43,9 @@ public class ResponseTests : Gee.TestCase {
                     assert_not_reached();
                 } catch (VSGI.InvalidResponse e) {
                     assert(e is VSGI.InvalidResponse.INVALID_STATUS_CODE);
+                    assert(e.message == "status code '655' is invalid");
                 }
             });
-
 
         add_test("validate() raises error when " +
             "Content-Type is missing and status should have entity", () => {
@@ -55,6 +56,8 @@ public class ResponseTests : Gee.TestCase {
                     assert_not_reached();
                 } catch (VSGI.InvalidResponse e) {
                     assert(e is VSGI.InvalidResponse.MISSING_CONTENT_TYPE);
+                    assert(e.message == "Content-Type header must be set for " +
+                                        "status code '200'");
                 }
             });
 
@@ -67,6 +70,8 @@ public class ResponseTests : Gee.TestCase {
                     assert_not_reached();
                 } catch (VSGI.InvalidResponse e) {
                     assert(e is VSGI.InvalidResponse.HAS_CONTENT_TYPE);
+                    assert(e.message == "Content-Type header must not be set " +
+                                        "with status code '204'");
                 }
             });
 
@@ -79,6 +84,8 @@ public class ResponseTests : Gee.TestCase {
                     assert_not_reached();
                 } catch (VSGI.InvalidResponse e) {
                     assert(e is VSGI.InvalidResponse.HAS_CONTENT_LENGTH);
+                    assert(e.message == "Content-Length header must not be " +
+                                        "set with status code '204'");
                 }
             });
 
@@ -91,6 +98,7 @@ public class ResponseTests : Gee.TestCase {
                     assert_not_reached();
                 } catch (VSGI.InvalidResponse e) {
                     assert(e is VSGI.InvalidResponse.INVALID_HEADER);
+                    assert(e.message == "must not set header of 'Status'");
                 }
             });
 
@@ -103,6 +111,7 @@ public class ResponseTests : Gee.TestCase {
                     assert_not_reached();
                 } catch (VSGI.InvalidResponse e) {
                     assert(e is VSGI.InvalidResponse.INVALID_HEADER);
+                    assert(e.message == "header key must not contain ':'");
                 }
             });
 
@@ -115,6 +124,8 @@ public class ResponseTests : Gee.TestCase {
                     assert_not_reached();
                 } catch (VSGI.InvalidResponse e) {
                     assert(e is VSGI.InvalidResponse.INVALID_HEADER);
+                    assert(e.message == "header key must not end with '-' " +
+                                        "or '_'");
                 }
             });
 
@@ -127,6 +138,8 @@ public class ResponseTests : Gee.TestCase {
                     assert_not_reached();
                 } catch (VSGI.InvalidResponse e) {
                     assert(e is VSGI.InvalidResponse.INVALID_HEADER);
+                    assert(e.message == "header key must not end with '-' " +
+                                        "or '_'");
                 }
             });
 
@@ -139,6 +152,8 @@ public class ResponseTests : Gee.TestCase {
                     assert_not_reached();
                 } catch (VSGI.InvalidResponse e) {
                     assert(e is VSGI.InvalidResponse.INVALID_HEADER);
+                    assert(e.message == "header key must not contain a " +
+                                        "newline");
                 }
             });
     }
