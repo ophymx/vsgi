@@ -33,7 +33,7 @@ public class IterableChunkedBytes : Object, Gee.Iterable<Bytes> {
     /**
      *
      */
-    public IterableChunkedBytes(Gee.Iterable chunks) {
+    public IterableChunkedBytes(Gee.Iterable<Bytes> chunks) {
         this.chunks = chunks;
     }
 
@@ -47,6 +47,10 @@ public class IterableChunkedBytes : Object, Gee.Iterable<Bytes> {
  *
  */
 public class ChunkedBytesIter : Object, Gee.Iterator<Bytes> {
+
+    private const uint8[] TAIL = {'0', '\r', '\n', '\r', '\n'};
+    private const uint8[] TERM = {'\r', '\n'};
+    private const uint8[] ZLEN = {};
 
     private enum State {
         PROCESSING,
@@ -93,27 +97,36 @@ public class ChunkedBytesIter : Object, Gee.Iterator<Bytes> {
         switch (state) {
             case State.PROCESSING:
                 Bytes chunk = chunks_iter.get();
+                size_t size = chunk.get_size();
                 /* Skip empty bytes since this finishes the chunked stream */
-                if (chunk.get_size() == 0 && chunks_iter.has_next()) {
-                    this.next();
-                    return this.get();
+                if (size == 0 && chunks_iter.has_next()) {
+                    next();
+                    return get();
                 }
-                return new Bytes("%s\r\n%s\r\n".printf(
-                        chunk.get_size().to_string("%x"),
-                        (string) chunk.get_data()).data);
+                /* size of chunk + 16 for size string + 4 for line breaks */
+                ByteArray bytes = new ByteArray.sized((uint)size + 16 + 4);
+                bytes.append(size_to_hex(size).data);
+                bytes.append(TERM);
+                bytes.append(chunk.get_data());
+                bytes.append(TERM);
+
+                return ByteArray.free_to_bytes((owned) bytes);
             case State.LAST:
-                return new Bytes({'0', '\r', '\n', '\r', '\n'});
+                return new Bytes.static(TAIL);
             case State.FINISHED:
-                return new Bytes({});
+                return new Bytes.static(ZLEN);
             default:
-                return new Bytes({});
+                assert_not_reached();
         }
     }
 
+    private static string size_to_hex(size_t size) {
+        return size.to_string("%" + size_t.FORMAT_MODIFIER + "x");
+    }
+
     public void remove() {
-        if (state == State.PROCESSING) {
+        if (state == State.PROCESSING)
             chunks_iter.remove();
-        }
     }
 }
 

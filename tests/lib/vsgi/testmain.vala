@@ -54,6 +54,7 @@ int main (string[] args) {
 
     /* CompositeApps */
     TestSuite composite_tests = new TestSuite("CompositeApps");
+    composite_tests.add_suite(new ChunkedAppTests().get_suite());
     composite_tests.add_suite(new CommonLoggerAppTests().get_suite());
     composite_tests.add_suite(new CompositeStackAppTests().get_suite());
     composite_tests.add_suite(new LintAppTests().get_suite());
