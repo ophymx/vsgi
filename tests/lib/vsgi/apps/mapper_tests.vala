@@ -23,7 +23,6 @@ public class MapperAppTests : CompositeAppTests {
 
     public MapperAppTests() {
         base("Mapper");
-
     }
 
     protected Gee.Map<string, VSGI.Application> test_map;

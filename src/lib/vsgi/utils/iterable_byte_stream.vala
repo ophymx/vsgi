@@ -53,7 +53,6 @@ public class ByteStreamIter : Object, Gee.Iterator<Bytes> {
     private InputStream input_stream;
     private size_t current_chunk_size = 0;
     private size_t next_chunk_size = 0;
-    private size_t collected = 0;
     private uint8[] current_chunk = new uint8[BUFFER_SIZE];
     private uint8[] next_chunk = new uint8[BUFFER_SIZE];
 
@@ -69,7 +68,6 @@ public class ByteStreamIter : Object, Gee.Iterator<Bytes> {
         current_chunk_size = next_chunk_size;
         try {
             next_chunk_size = input_stream.read(next_chunk);
-            collected += next_chunk_size;
         } catch(Error e) {
             log("vsgi", LogLevelFlags.LEVEL_ERROR, "%s", e.message);
         }

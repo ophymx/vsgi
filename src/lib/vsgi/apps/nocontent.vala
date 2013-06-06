@@ -33,7 +33,7 @@ public class NoContent : Object, Application {
      * {@inheritDoc}
      */
     public Response call(Request request) {
-        return NoContent.static_call(request);
+        return static_call(request);
     }
 
     /**

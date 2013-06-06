@@ -28,11 +28,12 @@ namespace VSGI {
  */
 public class CompositeStack : Object, Application, CompositeApp {
 
-
-
     private Gee.List<CompositeApp> apps;
+
     private CompositeApp top;
+
     private CompositeApp bottom;
+
     private Application _app;
     public Application app {
         get {
@@ -48,8 +49,8 @@ public class CompositeStack : Object, Application, CompositeApp {
      * @param apps List of composite applications to chain
      * @param app Application that ends the chain
      */
-    public CompositeStack(Gee.List<CompositeApp>? apps=null,
-        Application? app=null) {
+    public CompositeStack(Application? app=null,
+        Gee.List<CompositeApp>? apps=null) {
         if (apps == null)
             this.apps = new Gee.ArrayList<CompositeApp>();
         else
@@ -69,7 +70,7 @@ public class CompositeStack : Object, Application, CompositeApp {
         top = null;
         bottom = null;
 
-        foreach(CompositeApp app in apps) {
+        foreach (CompositeApp app in apps) {
             if (top == null) {
                 top = app;
                 bottom = app;
@@ -78,15 +79,15 @@ public class CompositeStack : Object, Application, CompositeApp {
                 bottom = app;
             }
         }
-        if ( bottom != null )
-            bottom.app = this.app;
+        if (bottom != null)
+            bottom.app = app;
     }
 
     /**
      * {@inheritDoc}
      */
     public Response call(Request request) {
-        assert(this.app != null);
+        assert(app != null);
 
         if (top == null) {
             return this.app.call(request);

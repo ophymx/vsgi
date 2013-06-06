@@ -5,10 +5,16 @@ public string cgi_var_to_header(string cgi_variable) {
     if (cgi_var.has_prefix("http_"))
         cgi_var = cgi_var.substring(cgi_var.index_of_nth_char(5));
 
-    switch(cgi_var) {
-        case "te":                      return "TE";
-        case "www_authenticate":        return "WWW-Authenticate";
-        case "content_md5":             return "Content-MD5";
+    switch (cgi_var) {
+        case "te":
+            return "TE";
+
+        case "www_authenticate":
+            return "WWW-Authenticate";
+
+        case "content_md5":
+            return "Content-MD5";
+
         default:
             StringBuilder builder = new StringBuilder();
             foreach(string token in cgi_var.split_set("_-")) {

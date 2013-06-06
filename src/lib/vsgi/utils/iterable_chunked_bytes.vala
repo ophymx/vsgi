@@ -104,7 +104,7 @@ public class ChunkedBytesIter : Object, Gee.Iterator<Bytes> {
                     return get();
                 }
                 /* size of chunk + 16 for size string + 4 for line breaks */
-                ByteArray bytes = new ByteArray.sized((uint)size + 16 + 4);
+                ByteArray bytes = new ByteArray.sized((uint) size + 16 + 4);
                 bytes.append(size_to_hex(size).data);
                 bytes.append(TERM);
                 bytes.append(chunk.get_data());

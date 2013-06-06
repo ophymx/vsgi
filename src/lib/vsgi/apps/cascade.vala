@@ -42,7 +42,7 @@ public class Cascade : Object, Application {
             this.apps = (!) apps;
 
         this.catches = new Gee.HashSet<uint>();
-        foreach(uint status in catches)
+        foreach (uint status in catches)
             this.catches.add(status);
     }
 

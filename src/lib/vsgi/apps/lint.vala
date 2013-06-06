@@ -39,7 +39,7 @@ public class Lint : Object, Application, CompositeApp {
      * {@inheritDoc}
      */
     public Response call(Request request) {
-        assert(this.app != null);
+        assert(app != null);
         try {
             request.validate();
         } catch (InvalidRequest e) {

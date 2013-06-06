@@ -46,14 +46,12 @@ public class CommonLogger : Object, Application, CompositeApp {
         StringBuilder builder = new StringBuilder();
 
         builder.append_printf("%s - %s [%s] \"%s %s %s\"",
-                                request.remote_addr,
-                                (request.remote_user != null &&
-                                    request.remote_user.length != 0) ?
-                                    request.remote_user : "-",
-                                now.format(TIME_FORMAT),
-                                request.method.to_string(),
-                                request.full_path(),
-                                request.protocol.to_string());
+            request.remote_addr,
+            request.remote_user.length != 0 ?  request.remote_user : "-",
+            now.format(TIME_FORMAT),
+            request.method.to_string(),
+            request.full_path(),
+            request.protocol.to_string());
 
         Response response = app.call(request);
 

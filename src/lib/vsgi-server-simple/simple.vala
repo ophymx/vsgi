@@ -161,10 +161,10 @@ public class VSGI.SimpleServer : VSGI.Server {
     }
 
     private bool parse_request_line(string request_line,
-                                out VSGI.Method method,
-                                out VSGI.Protocol protocol,
-                                out string path,
-                                out string query_string)
+                                    out VSGI.Method method,
+                                    out VSGI.Protocol protocol,
+                                    out string path,
+                                    out string query_string)
                                     throws ParseRequestError {
 
         string[] req = request_line.split(" ");
@@ -285,7 +285,7 @@ public class VSGI.SimpleServer : VSGI.Server {
             output.close();
         } catch (Error e) {
             log("VSGI.SimpleServer", LogLevelFlags.LEVEL_WARNING, "%s",
-                                e.message);
+                e.message);
         }
         return true;
     }

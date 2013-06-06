@@ -28,6 +28,7 @@ namespace VSGI {
 public class SuffixMapper : Object, Application, CompositeApp {
 
     public Application app { get; set; }
+
     private string[] suffixes;
 
     /**
@@ -44,14 +45,14 @@ public class SuffixMapper : Object, Application, CompositeApp {
      * {@inheritDoc}
      */
     public Response call(Request request) {
-        assert(this.app != null);
+        assert(app != null);
         Response original_response = app.call(request);
         if (original_response.status.code != 404)
             return original_response;
 
         Response response;
         string path_info = request.path_info;
-        foreach(string suffix in suffixes) {
+        foreach (string suffix in suffixes) {
             request.path_info = path_info + suffix;
             response = app.call(request);
             if (response.status.code != 404)

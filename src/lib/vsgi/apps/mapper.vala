@@ -27,6 +27,7 @@ namespace VSGI {
 public class Mapper : Object, Application, CompositeApp {
 
     private Gee.Map<string, Application> apps;
+
     public Application app { get; set; }
 
     /**
@@ -61,21 +62,19 @@ public class Mapper : Object, Application, CompositeApp {
      * * Rethink implementation and use
      */
     public Response call(Request request) {
-        assert(this.app != null);
+        assert(app != null);
         string path = request.path_info;
 
         foreach (var entry in apps.entries) {
             string starts_with = entry.key;
             Application app = entry.value;
-            if (path.index_of(starts_with) == 0 &&
-                path.get_char(starts_with.length) == '/') {
-
+            if (path.has_prefix(starts_with)) {
                 request.script_name += starts_with;
-                request.path_info = path[starts_with.length:path.length];
+                request.path_info = path.substring(starts_with.length);
                 return app.call(request);
             }
         }
-        return this.app.call(request);
+        return app.call(request);
     }
 }
 
