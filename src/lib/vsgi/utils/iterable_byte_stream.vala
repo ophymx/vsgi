@@ -71,23 +71,13 @@ public class ByteStreamIter : Object, Gee.Iterator<Bytes> {
         } catch(Error e) {
             log("vsgi", LogLevelFlags.LEVEL_ERROR, "%s", e.message);
         }
-        if (current_chunk_size < 1) {
-            if (next_chunk_size < 1 ) {
-                try {
-                    input_stream.close();
-                } catch(Error e) {
-                    log("vsgi", LogLevelFlags.LEVEL_ERROR, "%s", e.message);
-                }
-                return false;
+        if (current_chunk_size < 1 && (next_chunk_size < 1 || !next())) {
+            try {
+                input_stream.close();
+            } catch(Error e) {
+                log("vsgi", LogLevelFlags.LEVEL_ERROR, "%s", e.message);
             }
-            if (!next()) {
-                try {
-                    input_stream.close();
-                } catch(Error e) {
-                    log("vsgi", LogLevelFlags.LEVEL_ERROR, "%s", e.message);
-                }
-                return false;
-            }
+            return false;
         }
         return (current_chunk_size > 0);
     }
@@ -102,13 +92,13 @@ public class ByteStreamIter : Object, Gee.Iterator<Bytes> {
 
     public new Bytes get() {
         if (current_chunk_size != BUFFER_SIZE)
-            return new Bytes(current_chunk[0:current_chunk_size]);
-        else
-            return new Bytes(current_chunk);
+            current_chunk.resize((int) current_chunk_size);
+
+        return new Bytes(current_chunk);
     }
 
     public void remove() {
-        return;
+        assert_not_reached();
     }
 }
 
