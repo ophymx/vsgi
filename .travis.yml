@@ -5,8 +5,9 @@ compiler:
 before_install:
   - sudo add-apt-repository -y ppa:vala-team/ppa
   - sudo apt-get update -qq
-install: ./ci_install.sh
-script: ./ci_build.sh
+  - sudo apt-get install -qq ${VALAC}
+  - sudo apt-get install -qq libgee-dev libfcgi-dev
+script: ./waf configure build test
 env:
   - VALAC=valac-0.18
   - VALAC=valac-0.16
