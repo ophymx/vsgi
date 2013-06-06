@@ -7,7 +7,10 @@ before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -qq ${VALAC}
   - sudo apt-get install -qq libgee-dev libfcgi-dev
-script: ./waf configure build test
+before_script:
+  - ./waf configure
+  - ./waf build
+script: ./waf test
 env:
   - VALAC=valac-0.18
   - VALAC=valac-0.16
