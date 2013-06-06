@@ -33,18 +33,15 @@ public errordomain InvalidResponse {
  * Response returned from a call to a {@link VSGI.Application}
  */
 public class Response : Object {
-    private uint _status;
 
     public signal void headers_sent();
+
     public signal void body_sent();
 
     /**
      *
      */
-    public uint status {
-        get { return _status; }
-        private set { _status = value; }
-    }
+    public Status status { get; private set; }
 
     /**
      *
@@ -61,7 +58,7 @@ public class Response : Object {
      */
     public Response(uint status, Gee.Map<string, string>? headers=null,
         Gee.Iterable<Bytes>? body=null) {
-        this.status = status;
+        this.status = Status(status);
         if (headers == null)
             this.headers = new Gee.HashMap<string, string>();
         else
@@ -73,7 +70,7 @@ public class Response : Object {
     }
 
     public Response.simple(uint status, string body) {
-        this.status = status;
+        this.status = Status(status);
         this.headers = new Gee.HashMap<string, string>();
         this.body = new Body.from_string(body);
 
@@ -85,11 +82,11 @@ public class Response : Object {
      *
      */
     public bool validate() throws InvalidResponse {
-        if (status < 100 || status > 599)
+        if (!status.is_valid())
             throw new InvalidResponse.INVALID_STATUS_CODE(
                 @"status code '$status' is invalid");
 
-        if (Utils.status_has_entity(status)) {
+        if (status.has_entity()) {
             if (!headers.has_key("Content-Type"))
                 throw new InvalidResponse.MISSING_CONTENT_TYPE(
                     "Content-Type header must be set for status code " +

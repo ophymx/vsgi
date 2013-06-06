@@ -54,7 +54,7 @@ public class Cascade : Object, Application {
 
         foreach (Application app in apps){
             Response response = app.call(request);
-            if (!catches.contains(response.status))
+            if (!catches.contains(response.status.code))
                 return response;
         }
         return default_response;

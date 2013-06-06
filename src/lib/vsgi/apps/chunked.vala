@@ -42,7 +42,7 @@ public class Chunked : Object, Application, CompositeApp {
         Response response = app.call(request);
 
         if (request.protocol != Protocol.HTTP1_0 &&
-                Utils.status_has_entity(response.status) &&
+                response.status.has_entity() &&
                 !response.headers.has_key("Content-Length") &&
                 !response.headers.has_key("Transfer-Encoding")) {
             response.headers["Transfer-Encoding"] = "chunked";

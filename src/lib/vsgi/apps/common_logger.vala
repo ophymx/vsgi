@@ -57,7 +57,7 @@ public class CommonLogger : Object, Application, CompositeApp {
 
         Response response = app.call(request);
 
-        builder.append_printf(" %u ", response.status);
+        builder.append_printf(" %u ", response.status.code);
 
         if (!response.headers.has_key("Content-Length") |
                 response.headers["Content-Length"] == "0")

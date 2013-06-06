@@ -94,10 +94,8 @@ public class VSGI.SimpleServer : VSGI.Server {
 
     private bool send_response(OutputStream output, Response response) {
         StringBuilder builder = new StringBuilder();
-        builder.append_printf("%s %u %s\r\n",
-                                VSGI.Protocol.HTTP1_1.to_string(),
-                                response.status,
-                                VSGI.Utils.status_message(response.status));
+        builder.append_printf("%s %s %s\r\n", VSGI.Protocol.HTTP1_1.to_string(),
+            response.status.to_string(), response.status.message());
         foreach (var header in response.headers.entries) {
             builder.append_printf("%s: %s\r\n", header.key, header.value);
         }

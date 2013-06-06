@@ -35,7 +35,7 @@ public class CascadeAppTests : AppTests {
             test_apps.add(new VSGI.Echo());
             var test_cascade_app = new VSGI.Cascade(test_apps, {200, 204});
             var test_response = test_cascade_app.call(test_request);
-            assert(test_response.status == 404);
+            assert(test_response.status.code == 404);
         });
         add_test("[Cascade] call() returns a non-404 response when " +
             "at least one app response is not caught", () => {
@@ -43,7 +43,7 @@ public class CascadeAppTests : AppTests {
             test_apps.add(new VSGI.Echo());
             var test_cascade_app = new VSGI.Cascade(test_apps);
             var test_response = test_cascade_app.call(test_request);
-            assert(test_response.status == 200);
+            assert(test_response.status.code == 200);
         });
     }
 

@@ -25,13 +25,13 @@ public class StatusTests : Gee.TestCase {
     public StatusTests() {
         base("status functions");
         add_test("can lookup status messages from codes", () => {
-            assert(VSGI.Utils.status_message(405) == "Method Not Allowed");
+            assert(VSGI.Status(405).message() == "Method Not Allowed");
         });
         add_test("can test status code 204 should not have entity", () => {
-            assert(!VSGI.Utils.status_has_entity(204));
+            assert(!VSGI.Status(204).has_entity());
         });
         add_test("can test status code 403 should have entity", () => {
-            assert(VSGI.Utils.status_has_entity(403));
+            assert(VSGI.Status(403).has_entity());
         });
     }
 
