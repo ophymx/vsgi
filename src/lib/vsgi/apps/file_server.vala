@@ -53,11 +53,11 @@ public class FileServer : Object, Application {
                 headers["Content-Type"] = content_type;
 
             File file = File.new_for_path(filename);
-            FileInfo file_info = file.query_info("*", FileQueryInfoFlags.NONE);
+            FileInfo file_info = file.query_info("standard::size",
+                FileQueryInfoFlags.NONE);
             headers["Content-Length"] = file_info.get_size().to_string();
 
-            FileInputStream file_stream = file.read();
-            body = new IterableByteStream(file_stream);
+            body = new IterableByteStream(file.read());
         } catch(Error e) {
             return NotFound.static_call(request);
         }
