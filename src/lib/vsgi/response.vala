@@ -78,6 +78,13 @@ public class Response : Object {
         headers["Content-Length"] = body.length.to_string();
     }
 
+    public ssize_t content_length() {
+        ssize_t length = -1;
+        if (headers.has_key("Content-Length"))
+            headers["Content-Length"].scanf("%" + ssize_t.FORMAT, &length);
+        return length;
+    }
+
     /**
      *
      */

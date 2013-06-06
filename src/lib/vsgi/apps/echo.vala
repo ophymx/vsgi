@@ -65,19 +65,19 @@ public class Echo : Object, Application {
         }
         builder.append("\r\nBody:\r\n");
         body.add(new Bytes(builder.data));
-        if (request.headers.has_key("Content-Length") &&
-            request.headers["Content-Length"] != "0") {
-            size_t clen = request.headers["Content-Length"].scanf("%z");
-            foreach(Bytes chunk in request.body) {
+
+        ssize_t length = request.content_length();
+        if (length > 0) {
+            foreach (Bytes chunk in request.body) {
                 body.add(chunk);
-                clen -= chunk.get_size();
-                if (clen <= 0)
+                length -= (ssize_t) chunk.get_size();
+                if (length <= 0)
                     break;
             }
         }
-        size_t length = 0;
-        foreach(Bytes chunk in body) {
-            length += chunk.get_size();
+        length = 0;
+        foreach (Bytes chunk in body) {
+            length += (ssize_t) chunk.get_size();
         }
         headers["Content-Length"] = length.to_string();
         headers["Content-Type"] = "text/plain";

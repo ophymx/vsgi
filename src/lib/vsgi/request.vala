@@ -242,6 +242,13 @@ public class Request : Object {
         }
     }
 
+    public ssize_t content_length() {
+        ssize_t length = -1;
+        if (headers.has_key("Content-Length"))
+            headers["Content-Length"].scanf("%" + ssize_t.FORMAT, &length);
+        return length;
+    }
+
     /**
      * @return true if other request equals this request
      */

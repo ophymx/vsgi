@@ -57,8 +57,7 @@ public class CommonLogger : Object, Application, CompositeApp {
 
         builder.append_printf(" %u ", response.status.code);
 
-        if (!response.headers.has_key("Content-Length") |
-                response.headers["Content-Length"] == "0")
+        if (response.content_length() <= 0)
             builder.append_c('-');
         else
             builder.append(response.headers["Content-Length"]);
