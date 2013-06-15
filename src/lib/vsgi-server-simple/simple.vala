@@ -200,28 +200,37 @@ public class VSGI.SimpleServer : VSGI.Server {
         return true;
     }
 
+    private delegate bool IsConnectedFunc();
+
     private bool connection_handler(SocketConnection conn) {
         /* Get Connection Info */
-        string script_name = "";
         string remote_addr;
         uint16 remote_port;
         string server_addr;
         uint16 server_port;
-        VSGI.Scheme scheme = VSGI.Scheme.HTTP;
         if (!get_connection_values(conn, out remote_addr, out remote_port,
                 out server_addr, out server_port)) {
             return false;
         }
 
-        string req_line;
-        size_t size;
         DataInputStream input = new DataInputStream(conn.input_stream);
         OutputStream output = conn.output_stream;
         input.set_newline_type(DataStreamNewlineType.CR_LF);
 
-        while (conn.is_connected()) {
-            req_line = "";
-            size = 0;
+        return input_handler(remote_addr, remote_port, server_addr, server_port,
+            input, output, () => { return conn.is_connected(); });
+    }
+
+    private bool input_handler(string remote_addr, uint16 remote_port,
+                               string server_addr, uint16 server_port,
+                               DataInputStream input, OutputStream output,
+                               IsConnectedFunc connected) {
+        string script_name = "";
+        VSGI.Scheme scheme = VSGI.Scheme.HTTP;
+
+        while (connected()) {
+            string req_line = "";
+            size_t size = 0;
 
             /* Parse Initial Request */
             try {
