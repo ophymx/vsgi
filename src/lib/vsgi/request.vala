@@ -141,7 +141,7 @@ public class Request : Object {
 
     public Request.from_cgi(Gee.Map<string, string> cgi_env,
         Gee.Iterable<Bytes> body) {
-        this.headers = new Gee.HashMap<string, string>();
+        headers = new Gee.HashMap<string, string>();
         foreach(Gee.Map.Entry<string, string> cgi_var in cgi_env.entries) {
             string key = cgi_var.key;
             string val = cgi_var.value;
@@ -157,15 +157,15 @@ public class Request : Object {
                 case "GATEWAY_INTERFACE":
                     break;
                 case "PATH_INFO":
-                    this.path_info = val;
+                    path_info = val;
                     break;
                 case "PATH_TRANSLATED":
                     break;
                 case "QUERY_STRING":
-                    this.query_string = val;
+                    query_string = val;
                     break;
                 case "REMOTE_ADDR":
-                    this.remote_addr = val;
+                    remote_addr = val;
                     break;
                 case "REMOTE_HOST":
                     break;
@@ -174,22 +174,22 @@ public class Request : Object {
                 case "REMOTE_USER":
                     break;
                 case "REQUEST_METHOD":
-                    this.method = Method.from_string(val);
+                    method = Method.from_string(val);
                     break;
                 case "SCRIPT_NAME":
-                    this.script_name = val;
+                    script_name = val;
                     break;
                 case "SERVER_NAME":
-                    this.server_addr = val;
+                    server_addr = val;
                     break;
                 case "SERVER_PORT":
-                    this.server_port = (uint16) int.parse(val);
+                    server_port = (uint16) int.parse(val);
                     break;
                 case "SERVER_PROTOCOL":
-                    this.protocol = Protocol.from_string(val);
+                    protocol = Protocol.from_string(val);
                     break;
                 case "SERVER_SOFTWARE":
-                    this.server_software = val;
+                    server_software = val;
                     break;
                 default:
                     if (cgi_var.key.has_prefix("HTTP_"))
@@ -253,37 +253,37 @@ public class Request : Object {
      * @return true if other request equals this request
      */
     public bool equal_to(Request other) {
-        if (method       != other.method)       return false;
-        if (script_name  != other.script_name)  return false;
-        if (path_info    != other.path_info)    return false;
-        if (query_string != other.query_string) return false;
-        if (remote_addr  != other.remote_addr)  return false;
-        if (server_addr  != other.server_addr)  return false;
-        if (server_port  != other.server_port)  return false;
-        if (protocol     != other.protocol)     return false;
-        if (scheme       != other.scheme)       return false;
-        if (!headers.keys.contains_all(other.headers.keys) ||
+        if (method       != other.method       ||
+            script_name  != other.script_name  ||
+            path_info    != other.path_info    ||
+            query_string != other.query_string ||
+            remote_addr  != other.remote_addr  ||
+            server_addr  != other.server_addr  ||
+            server_port  != other.server_port  ||
+            protocol     != other.protocol     ||
+            scheme       != other.scheme       ||
+            !headers.keys.contains_all(other.headers.keys) ||
             !other.headers.keys.contains_all(headers.keys)) {
             return false;
         }
-        foreach(string key in headers.keys) {
+        foreach (string key in headers.keys) {
             if (headers[key] != other.headers[key]) {
                 return false;
             }
         }
 
         ByteArray body_data = new ByteArray();
-        foreach(Bytes chunk in body) {
+        foreach (Bytes chunk in body) {
             body_data.append(chunk.get_data());
         }
         ByteArray other_body_data = new ByteArray();
-        foreach(Bytes chunk in other.body) {
+        foreach (Bytes chunk in other.body) {
             other_body_data.append(chunk.get_data());
         }
         if (body_data.len != other_body_data.len)
             return false;
 
-        for(int i = 0; i < body_data.len; i++) {
+        for (int i = 0; i < body_data.len; i++) {
             if (body_data.data[i] != other_body_data.data[i])
                 return false;
         }

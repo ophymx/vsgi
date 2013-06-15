@@ -88,14 +88,14 @@ public abstract class Server {
                 setup_file, Module.error());
         }
 
-        this.app = ((AppSetupFunc) function)(this);
-        if (this.app == null) {
+        app = ((AppSetupFunc) function)(this);
+        if (app == null) {
             throw new AppLoadError.SETUP_RETURNED_NULL("'%s' returned null",
                 SETUP_FUNC);
         }
 
         log("vsgi", LogLevelFlags.LEVEL_DEBUG, "loaded '%s' app",
-            this.app.get_type().name());
+            app.get_type().name());
 
         return true;
     }

@@ -49,7 +49,7 @@ public class Body : Object, Gee.Iterable<Bytes> {
      * Creates an empty body that is still a valid Iterable<Bytes> object.
      */
     public Body.empty() {
-        this.body = new Bytes({});
+        body = new Bytes({});
     }
 
     public Gee.Iterator<Bytes> iterator() {
@@ -75,7 +75,7 @@ public class BodyIter : Object, Gee.Iterator<Bytes> {
 
     public BodyIter(Bytes body) {
         this.body = body;
-        this.state = State.INIT;
+        state = State.INIT;
     }
 
     public bool next() {

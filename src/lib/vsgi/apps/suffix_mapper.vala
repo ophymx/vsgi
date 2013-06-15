@@ -32,11 +32,11 @@ public class SuffixMapper : Object, Application, CompositeApp {
     private string[] suffixes;
 
     /**
-     * @param suffixes List of suffixes to attempt to add to request.
      * @param app Application to add suffixes for in case of 404.
+     * @param suffixes List of suffixes to attempt to add to request.
      */
-    public SuffixMapper(string[] suffixes = {
-        ".html", "index.hml", "/index.html"}, Application? app=null) {
+    public SuffixMapper(Application? app=null,
+        string[] suffixes = {".html", "index.hml", "/index.html"}) {
         this.suffixes = suffixes;
         this.app = app;
     }
