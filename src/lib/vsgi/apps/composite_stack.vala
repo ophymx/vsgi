@@ -49,12 +49,9 @@ public class CompositeStack : Object, Application, CompositeApp {
      * @param apps List of composite applications to chain
      * @param app Application that ends the chain
      */
-    public CompositeStack(Application? app=null,
-        Gee.List<CompositeApp>? apps=null) {
-        if (apps == null)
-            this.apps = new Gee.ArrayList<CompositeApp>();
-        else
-            this.apps = (!) apps;
+    public CompositeStack(Application? app = null,
+        Gee.List<CompositeApp> apps = new Gee.ArrayList<CompositeApp>()) {
+        this.apps = apps;
         this.app = app;
     }
 

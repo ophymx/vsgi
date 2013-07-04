@@ -25,7 +25,7 @@ public class CascadeAppTests : AppTests {
     public CascadeAppTests() {
         base("Cascade");
         add_test("[Cascade] converts catches array to Gee.HashSet", () => {
-            var test_cascade_app = new VSGI.Cascade(null, {404});
+            var test_cascade_app = new VSGI.Cascade(test_apps, {404});
             assert(test_cascade_app.catches.size == 1);
             assert(test_cascade_app.catches.contains(404));
         });

@@ -56,17 +56,12 @@ public class Response : Object {
     /**
      *
      */
-    public Response(uint status, Gee.Map<string, string>? headers=null,
-        Gee.Iterable<Bytes>? body=null) {
+    public Response(uint status,
+        Gee.Map<string, string> headers = new Gee.HashMap<string, string>(),
+        Gee.Iterable<Bytes> body = new Body.empty()) {
         this.status = Status(status);
-        if (headers == null)
-            this.headers = new Gee.HashMap<string, string>();
-        else
-            this.headers = (!) headers;
-        if (body == null)
-            this.body = new Body.empty();
-        else
-            this.body = (!) body;
+        this.headers = headers;
+        this.body = body;
     }
 
     public Response.simple(uint status, string body) {

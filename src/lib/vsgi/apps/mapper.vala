@@ -33,12 +33,9 @@ public class Mapper : Object, Application, CompositeApp {
     /**
      *
      */
-    public Mapper(Gee.Map<string, Application>? apps=null,
-        Application? app=null) {
-        if (apps != null)
-            this.apps = apps;
-        else
-            this.apps = new Gee.HashMap<string, Application>();
+    public Mapper(Gee.Map<string, Application> apps =
+        new Gee.HashMap<string, Application>(), Application? app=null) {
+        this.apps = apps;
         this.app = app;
     }
 

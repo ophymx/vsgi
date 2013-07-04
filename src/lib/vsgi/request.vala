@@ -129,7 +129,6 @@ public class Request : Object {
         this.query_string = query_string;
         this.remote_addr = remote_addr;
         this.remote_port = remote_port;
-        this.remote_user = "";
         this.server_addr = server_addr;
         this.server_port = server_port;
         this.protocol = protocol;
@@ -192,8 +191,8 @@ public class Request : Object {
                     server_software = val;
                     break;
                 default:
-                    if (cgi_var.key.has_prefix("HTTP_"))
-                        headers[Utils.cgi_var_to_header(cgi_var.key)] = val;
+                    if (key.has_prefix("HTTP_"))
+                        headers[Utils.cgi_var_to_header(key)] = val;
                     break;
             }
         }
@@ -205,17 +204,19 @@ public class Request : Object {
      * @return combined script_name and path_info.
      */
     public string path() {
-        return script_name.concat(path_info);
+        StringBuilder builder = new StringBuilder(script_name);
+        builder.append(path_info);
+        return builder.str;
     }
 
     /**
      * @return combined path and query_string.
      */
     public string full_path() {
-        if (query_string.length == 0)
-            return path();
-        else
-            return path().concat("?" + query_string);
+        StringBuilder builder = new StringBuilder(path());
+        if (query_string.length > 0)
+            builder.printf("?%s", query_string);
+        return builder.str;
     }
 
     /**
@@ -223,7 +224,7 @@ public class Request : Object {
      */
     public string full_url() {
         StringBuilder builder = new StringBuilder();
-        builder.append_printf("%s://%s", scheme.to_string(), host());
+        builder.printf("%s://%s", scheme.to_string(), host());
         if (server_port != scheme.default_port()) {
             builder.append_printf(":%u", server_port);
         }
