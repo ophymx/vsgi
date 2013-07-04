@@ -115,6 +115,12 @@ def build(bld):
             PACKAGES = packages,
             install_path = '${LIBDIR}/pkgconfig')
 
+        bld(after = '%s-%s' % (lib, bld.env.API_VERSION),
+            source = '%s-%s.gir' % ( gir_name, bld.env.API_VERSION ),
+            target = '%s-%s.typelib' % ( gir_name, bld.env.API_VERSION ),
+            install_path = '${LIBDIR}/girepository-1.0',
+            rule='g-ir-compiler ${SRC} -o ${TGT}')
+
     for exe in get_dirs('src/bin'):
         exe_dir = path_join('src/bin', exe)
         build_config = ConfigParser.SafeConfigParser(default_build_config)
