@@ -27,8 +27,7 @@ namespace VSGI {
  */
 public class CommonLogger : Object, Application, CompositeApp {
 
-    /* Not currently used since log is built with StringBuilder */
-    private const string FORMAT = "%s - %s [%s] \"%s %s%s %s\" %d %s %0.4f";
+    private const string FORMAT = "%s - %s [%s] \"%s %s %s\" %u %s";
     private const string TIME_FORMAT = "%d/%b/%Y:%H:%M:%S %z";
 
     public Application app { set; get; }
@@ -42,27 +41,24 @@ public class CommonLogger : Object, Application, CompositeApp {
      */
     public Response call(Request request) {
         assert(this.app != null);
-        Time now = Time.local((time_t)new DateTime.now_utc().to_unix());
-        StringBuilder builder = new StringBuilder();
-
-        builder.append_printf("%s - %s [%s] \"%s %s %s\"",
-            request.remote_addr,
-            request.remote_user.length != 0 ?  request.remote_user : "-",
-            now.format(TIME_FORMAT),
-            request.method.to_string(),
-            request.full_path(),
-            request.protocol.to_string());
 
         Response response = app.call(request);
 
-        builder.append_printf(" %u ", response.status.code);
+        response.body_sent.connect(() => {
+            Time now = Time.local((time_t) new DateTime.now_utc().to_unix());
 
-        if (response.content_length() <= 0)
-            builder.append_c('-');
-        else
-            builder.append(response.headers["Content-Length"]);
+            log("VSGI.CommonLogger", LogLevelFlags.LEVEL_INFO, FORMAT,
+                request.remote_addr,
+                request.remote_user.length != 0 ?  request.remote_user : "-",
+                now.format(TIME_FORMAT),
+                request.method.to_string(),
+                request.full_path(),
+                request.protocol.to_string(),
+                response.status.code,
+                response.content_length() <= 0 ? "-" :
+                    response.content_length().to_string());
+        });
 
-        log("VSGI.CommonLogger", LogLevelFlags.LEVEL_INFO, "%s", builder.str);
         return response;
     }
 }

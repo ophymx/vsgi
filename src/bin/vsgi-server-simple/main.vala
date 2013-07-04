@@ -13,7 +13,7 @@ const string[] LOG_DOMAINS = {
 };
 
 void stdout_logfunc(string? domain, LogLevelFlags levels, string message) {
-    stdout.printf("%s\n", message.split(" ", 2)[1]);
+    stdout.printf("%s\n", message);
 }
 
 int main() {
