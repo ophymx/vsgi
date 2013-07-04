@@ -25,3 +25,8 @@ To configure, build, and install simple do the following:
     ./waf configure
     ./waf
     ./waf install
+
+## Hacking
+To build and run the example from the project directory run
+
+    ./examples/build-and-run.sh
