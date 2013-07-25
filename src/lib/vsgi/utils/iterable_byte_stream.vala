@@ -1,4 +1,4 @@
-/* utils/iterable_byte_stream.vala
+/* src/lib/vsgi/utils/iterable_byte_stream.vala
  *
  * Copyright (C) 2012 Jeffrey T. Peckham
  *

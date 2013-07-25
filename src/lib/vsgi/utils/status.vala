@@ -1,4 +1,4 @@
-/* lib/vsgi/utils/status.vala
+/* src/lib/vsgi/utils/status.vala
  *
  * Copyright (C) 2012 Jeffrey T. Peckham
  *

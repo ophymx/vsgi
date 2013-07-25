@@ -1,4 +1,4 @@
-/* lib/vsgi/compositeapp.vala
+/* src/lib/vsgi/compositeapp.vala
  *
  * Copyright (C) 2012 Jeffrey T. Peckham
  *

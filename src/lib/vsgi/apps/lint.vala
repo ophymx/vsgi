@@ -1,4 +1,4 @@
-/* lib/vsgi/apps/lint.vala
+/* src/lib/vsgi/apps/lint.vala
  *
  * Copyright (C) 2012 Jeffrey T. Peckham
  *

@@ -1,4 +1,4 @@
-/* lib/vsgi/apps/chunked.vala
+/* src/lib/vsgi/apps/chunked.vala
  *
  * Copyright (C) 2013 Jeffrey T. Peckham
  *

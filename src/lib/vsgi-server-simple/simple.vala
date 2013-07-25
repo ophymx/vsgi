@@ -1,4 +1,4 @@
-/* lib/vsgi-server-simple/simple.vala
+/* src/lib/vsgi-server-simple/simple.vala
  *
  * Copyright (C) 2012 Jeffrey T. Peckham
  *

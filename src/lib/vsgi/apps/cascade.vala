@@ -1,4 +1,4 @@
-/* lib/vsgi/apps/cascade.vala
+/* src/lib/vsgi/apps/cascade.vala
  *
  * Copyright (C) 2012 Jeffrey T. Peckham
  *

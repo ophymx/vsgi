@@ -1,4 +1,4 @@
-/* lib/vsgi/apps/nocontent.vala
+/* src/lib/vsgi/apps/nocontent.vala
  *
  * Copyright (C) 2012 Jeffrey T. Peckham
  *

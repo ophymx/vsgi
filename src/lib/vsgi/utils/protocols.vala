@@ -1,4 +1,4 @@
-/* lib/vsgi/utils/protocols.vala
+/* src/lib/vsgi/utils/protocols.vala
  *
  * Copyright (C) 2012 Jeffrey T. Peckham
  *

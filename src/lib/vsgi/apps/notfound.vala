@@ -1,4 +1,4 @@
-/* lib/vsgi/apps/notfound.vala
+/* src/lib/vsgi/apps/notfound.vala
  *
  * Copyright (C) 2012 Jeffrey T. Peckham
  *

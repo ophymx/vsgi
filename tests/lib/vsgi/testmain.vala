@@ -1,4 +1,4 @@
-/* tests/testmain.vala
+/* tests/lib/vsgi/testmain.vala
  *
  * Copyright (C) 2012 Jeffrey T. Peckham
  *

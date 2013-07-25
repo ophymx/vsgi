@@ -1,4 +1,4 @@
-/* lib/vsgi/utils/scheme.vala
+/* src/lib/vsgi/utils/scheme.vala
  *
  * Copyright (C) 2012 Jeffrey T. Peckham
  *

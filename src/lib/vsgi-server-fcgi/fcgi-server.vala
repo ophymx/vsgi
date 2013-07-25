@@ -1,4 +1,4 @@
-/* lib/vsgi-server-fcgi/fcgi-server.vala
+/* src/lib/vsgi-server-fcgi/fcgi-server.vala
  *
  * Copyright (C) 2012 Jeffrey T. Peckham
  *
