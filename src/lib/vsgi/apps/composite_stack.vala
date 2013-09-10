@@ -28,11 +28,7 @@ namespace VSGI {
  */
 public class CompositeStack : Object, Application, CompositeApp {
 
-    private Gee.List<CompositeApp> apps;
-
-    private CompositeApp top;
-
-    private CompositeApp bottom;
+    private Gee.ArrayList<CompositeApp> apps;
 
     private Application _app;
     public Application app {
@@ -41,7 +37,8 @@ public class CompositeStack : Object, Application, CompositeApp {
         }
         set {
             this._app = value;
-            restack();
+            if (!apps.is_empty)
+                apps.last().app = value;
         }
     }
 
@@ -50,7 +47,8 @@ public class CompositeStack : Object, Application, CompositeApp {
      * @param app Application that ends the chain
      */
     public CompositeStack(Application? app = null,
-        Gee.List<CompositeApp> apps = new Gee.ArrayList<CompositeApp>()) {
+        Gee.ArrayList<CompositeApp> apps = new Gee.ArrayList<CompositeApp>()) {
+
         this.apps = apps;
         this.app = app;
     }
@@ -58,26 +56,23 @@ public class CompositeStack : Object, Application, CompositeApp {
     /**
      * Add application to the end of the helper chain (not final app)
      */
-    public void add(CompositeApp app) {
-        apps.add(app);
-        restack();
+    public bool add(CompositeApp app) {
+        if (apps.add(app)) {
+            restack();
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private void restack() {
-        top = null;
-        bottom = null;
+        CompositeApp previous = new PassThrough();
 
         foreach (CompositeApp app in apps) {
-            if (top == null) {
-                top = app;
-                bottom = app;
-            } else {
-                bottom.app = app;
-                bottom = app;
-            }
+            previous.app = app;
+            previous = app;
         }
-        if (bottom != null)
-            bottom.app = app;
+        previous.app = app;
     }
 
     /**
@@ -86,11 +81,8 @@ public class CompositeStack : Object, Application, CompositeApp {
     public Response call(Request request) {
         assert(app != null);
 
-        if (top == null) {
-            return this.app.call(request);
-        }
-
-        return top.call(request);
+        return (apps.is_empty ? app :
+            apps.first() as Application).call(request);
     }
 }
 
