@@ -23,7 +23,7 @@ namespace VSGI {
 
 [IntegerType]
 [CCode (has_type_id = false)]
-public struct Status : uint16 {
+public struct Status : uint {
     private const Status[] STATUS_WITHOUT_ENTITY = {204, 205, 305};
 
     public bool has_entity() {
