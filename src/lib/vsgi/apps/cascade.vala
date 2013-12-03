@@ -35,7 +35,7 @@ public class Cascade : Object, Application {
      * @param catches return codes to catch and cascade on
      */
     public Cascade(Gee.List<Application> apps =
-        new Gee.ArrayList<Application>(), uint[] catches = {404, 405}) {
+        new Gee.ArrayList<Application>(), Status[] catches = {404, 405}) {
 
         this.apps = apps;
 
@@ -52,7 +52,7 @@ public class Cascade : Object, Application {
 
         foreach (Application app in apps){
             Response response = app.call(request);
-            if (!catches.contains(response.status.code))
+            if (!(response.status in catches))
                 return response;
         }
         return default_response;

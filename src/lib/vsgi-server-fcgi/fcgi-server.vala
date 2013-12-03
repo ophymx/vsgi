@@ -93,7 +93,7 @@ public class VSGI.FcgiServer : VSGI.Server {
         VSGI.Request req = new VSGI.Request.from_cgi(cgi_env, body);
         VSGI.Response response = this.app.call(req);
 
-        request.out.printf("Status: %u\r\n", response.status.code);
+        request.out.printf("Status: %u\r\n", response.status);
         foreach (var header in response.headers.entries) {
             request.out.printf("%s: %s\r\n", header.key, header.value);
         }

@@ -27,7 +27,7 @@ public class FileServerAppTests : AppTests {
             test_request.path_info = "/test_file.txt";
             test_request.script_name = "";
             var test_response = test_app.call(test_request);
-            assert(test_response.status.code == 200);
+            assert(test_response.status == 200);
             assert(test_response.headers["Content-Length"] == "13");
             var body_string = body_to_string(test_response.body);
             assert(body_string.length == 13);

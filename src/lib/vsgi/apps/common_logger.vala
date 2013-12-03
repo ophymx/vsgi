@@ -54,7 +54,7 @@ public class CommonLogger : Object, Application, CompositeApp {
                 request.method.to_string(),
                 request.full_path(),
                 request.protocol.to_string(),
-                response.status.code,
+                response.status,
                 response.content_length() <= 0 ? "-" :
                     response.content_length().to_string());
         });

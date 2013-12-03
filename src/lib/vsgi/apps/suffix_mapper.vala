@@ -47,7 +47,7 @@ public class SuffixMapper : Object, Application, CompositeApp {
     public Response call(Request request) {
         assert(app != null);
         Response original_response = app.call(request);
-        if (original_response.status.code != 404)
+        if (original_response.status != 404)
             return original_response;
 
         Response response;
@@ -55,7 +55,7 @@ public class SuffixMapper : Object, Application, CompositeApp {
         foreach (string suffix in suffixes) {
             request.path_info = path_info + suffix;
             response = app.call(request);
-            if (response.status.code != 404)
+            if (response.status != 404)
                 return response;
         }
         return original_response;

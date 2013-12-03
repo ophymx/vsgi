@@ -255,7 +255,7 @@ public class VSGI.SimpleServer : VSGI.Server {
                 parse_request_line(req_line, out method, out protocol,
                     out path_info, out query_string);
             } catch(ParseRequestError e) {
-                uint status_code = 500;
+                Status status_code = 500;
                 if (e is ParseRequestError.UNSUPPORTED_METHOD)
                     status_code = 405;
                 if (e is ParseRequestError.UNSUPPORTED_PROTOCOL)

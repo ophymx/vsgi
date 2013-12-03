@@ -21,33 +21,25 @@
  */
 namespace VSGI {
 
-public struct Status {
-    public uint code;
-
-    private const uint[] STATUS_WITHOUT_ENTITY = {204, 205, 305};
-
-    public Status(uint code) {
-        this.code = code;
-    }
+[IntegerType]
+[CCode (has_type_id = false)]
+public struct Status : uint16 {
+    private const Status[] STATUS_WITHOUT_ENTITY = {204, 205, 305};
 
     public bool has_entity() {
-        return (is_valid() && !(code in STATUS_WITHOUT_ENTITY));
+        return (is_valid() && !(this in STATUS_WITHOUT_ENTITY));
     }
 
     public bool is_valid() {
-        return (100 <= code && code < 600);
-    }
-
-    public string to_string(string format = "%u") {
-        return code.to_string(format);
+        return (100 <= this && this < 600);
     }
 
     public string message() {
-        switch (code) {
+        switch (this) {
             /* 1XX Info */
             case 100: return "Continue";
             case 101: return "Switching Protocols";
-            case 102: return "Processing";                          /* RFC 2518*/
+            case 102: return "Processing";                      /* RFC 2518*/
 
             /* 2XX Success */
             case 200: return "OK";
@@ -57,9 +49,9 @@ public struct Status {
             case 204: return "No Content";
             case 205: return "Reset Content";
             case 206: return "Partial Content";
-            case 207: return "Multi-Status";                        /* RFC 4918 */
-            case 208: return "Already Reported";                    /* RFC 5842 */
-            case 226: return "IM Used";                             /* RFC 3229 */
+            case 207: return "Multi-Status";                    /* RFC 4918 */
+            case 208: return "Already Reported";                /* RFC 5842 */
+            case 226: return "IM Used";                         /* RFC 3229 */
 
             /* 3XX Redirection */
             case 300: return "Multiple Choices";
@@ -91,13 +83,13 @@ public struct Status {
             case 415: return "Unsupported Media Type";
             case 416: return "Requested Range Not Satisfiable";
             case 417: return "Expectation Failed";
-            case 422: return "Unprecessable Entity";                /* RFC 4918 */
-            case 423: return "Locked";                              /* RFC 4918 */
-            case 424: return "Failed Dependency";                   /* RFC 4918 */
-            case 426: return "Upgrade Required";                    /* RFC 2817 */
-            case 428: return "Precondition Required";               /* RFC 6585 */
-            case 429: return "Too Many Requests";                   /* RFC 6585 */
-            case 431: return "Request Header Fields Too Large";     /* RFC 6585 */
+            case 422: return "Unprecessable Entity";            /* RFC 4918 */
+            case 423: return "Locked";                          /* RFC 4918 */
+            case 424: return "Failed Dependency";               /* RFC 4918 */
+            case 426: return "Upgrade Required";                /* RFC 2817 */
+            case 428: return "Precondition Required";           /* RFC 6585 */
+            case 429: return "Too Many Requests";               /* RFC 6585 */
+            case 431: return "Request Header Fields Too Large"; /* RFC 6585 */
 
             /* 5XX Server Error */
             case 500: return "Internal Server Error";
@@ -106,12 +98,12 @@ public struct Status {
             case 503: return "Service Unavailable";
             case 504: return "Gateway Timeout";
             case 505: return "HTTP Version Not Supported";
-            case 506: return "Variant Also Negotiates";             /* RFC 2295 */
-            case 507: return "Insufficient Storage";                /* RFC 4918 */
-            case 508: return "Loop Detected";                       /* RFC 5842 */
+            case 506: return "Variant Also Negotiates";         /* RFC 2295 */
+            case 507: return "Insufficient Storage";            /* RFC 4918 */
+            case 508: return "Loop Detected";                   /* RFC 5842 */
             case 509: return "Bandwidth Limit Exceeded";
-            case 510: return "Not Extended";                        /* RFC 2774 */
-            case 511: return "Network Authentication Required";     /* RFC 6585 */
+            case 510: return "Not Extended";                    /* RFC 2774 */
+            case 511: return "Network Authentication Required"; /* RFC 6585 */
 
             default:  return "";
         }
