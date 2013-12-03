@@ -39,21 +39,21 @@ public class FileServer : Object, Application {
      * {@inheritDoc}
      */
     public Response call(Request request) {
-        Gee.HashMap<string, string> headers = new Gee.HashMap<string, string>();
+        var headers = new Gee.HashMap<string, string>();
         IterableByteStream body;
 
         try {
-            bool results_uncertain;
-            string filename = Path.build_filename(dir, request.path_info);
-            string content_type = ContentType.guess(filename, null,
-                out results_uncertain);
-            if (results_uncertain)
+            bool uncertain;
+            var filename = Path.build_filename(dir, request.path_info);
+            var content_type = ContentType.guess(filename, null, out uncertain);
+
+            if (uncertain)
                 headers["Content-Type"] = "text/plain";
             else
                 headers["Content-Type"] = content_type;
 
-            File file = File.new_for_path(filename);
-            FileInfo file_info = file.query_info("standard::size",
+            var file = File.new_for_path(filename);
+            var file_info = file.query_info("standard::size",
                 FileQueryInfoFlags.NONE);
             headers["Content-Length"] = file_info.get_size().to_string();
 

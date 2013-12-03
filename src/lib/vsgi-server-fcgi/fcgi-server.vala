@@ -73,32 +73,31 @@ public class VSGI.FcgiServer : VSGI.Server {
     }
 
     private bool connection_handler(FastCGI.request request) {
-        Gee.ArrayList<Bytes> body = new Gee.ArrayList<Bytes>();
-        Gee.HashMap<string, string> cgi_env = new Gee.HashMap<string, string>();
+        var body = new Gee.ArrayList<Bytes>();
+        var cgi_env = new Gee.HashMap<string, string>();
 
-        foreach(string param in request.environment.get_all()) {
-            string[] cgi_env_pair = param.split("=", 2);
+        foreach(var param in request.environment.get_all()) {
+            var cgi_env_pair = param.split("=", 2);
             cgi_env[cgi_env_pair[0]] = cgi_env_pair[1];
         }
 
-        int read_size;
-        uint8[] buffer = new uint8[MAX_BUFFER];
-        read_size = request.in.read(buffer);
+        var buffer = new uint8[MAX_BUFFER];
+        var read_size = request.in.read(buffer);
         body.add(new Bytes(buffer[0:read_size]));
         while (read_size == MAX_BUFFER) {
             body.add(new Bytes(buffer[0:read_size]));
             read_size = request.in.read(buffer);
         }
 
-        VSGI.Request req = new VSGI.Request.from_cgi(cgi_env, body);
-        VSGI.Response response = this.app.call(req);
+        var req = new VSGI.Request.from_cgi(cgi_env, body);
+        var response = this.app.call(req);
 
         request.out.printf("Status: %u\r\n", response.status);
         foreach (var header in response.headers.entries) {
             request.out.printf("%s: %s\r\n", header.key, header.value);
         }
         request.out.printf("\r\n");
-        foreach (Bytes chunk in response.body) {
+        foreach (var chunk in response.body) {
             int written = 0;
             while (written < chunk.length)
                 written += request.out.put_str(

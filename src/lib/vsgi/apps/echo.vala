@@ -43,10 +43,10 @@ public class Echo : Object, Application {
      *
      */
     public static Response static_call(Request request) {
-        Gee.HashMap<string, string> headers = new Gee.HashMap<string, string>();
-        Gee.ArrayList<Bytes> body = new Gee.ArrayList<Bytes>();
-        Request r = request;
-        StringBuilder builder = new StringBuilder();
+        var headers = new Gee.HashMap<string, string>();
+        var body = new Gee.ArrayList<Bytes>();
+        var r = request;
+        var builder = new StringBuilder();
         builder.append_printf("Connection: %s:%s -> %s://%s:%s\r\n",
             r.remote_addr,
             r.remote_port.to_string(),
@@ -66,9 +66,9 @@ public class Echo : Object, Application {
         builder.append("\r\nBody:\r\n");
         body.add(new Bytes(builder.data));
 
-        ssize_t length = request.content_length();
+        var length = request.content_length();
         if (length > 0) {
-            foreach (Bytes chunk in request.body) {
+            foreach (var chunk in request.body) {
                 body.add(chunk);
                 length -= (ssize_t) chunk.get_size();
                 if (length <= 0)
@@ -76,7 +76,7 @@ public class Echo : Object, Application {
             }
         }
         length = 0;
-        foreach (Bytes chunk in body) {
+        foreach (var chunk in body) {
             length += (ssize_t) chunk.get_size();
         }
         headers["Content-Length"] = length.to_string();

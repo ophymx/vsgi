@@ -33,8 +33,8 @@ public class VSGI.SimpleServer : VSGI.Server {
         this.port = port;
 
         socket_service = new ThreadedSocketService(150);
-        InetAddress addr = new InetAddress.any(SocketFamily.IPV4);
-        InetSocketAddress socket = new InetSocketAddress(addr, this.port);
+        var addr = new InetAddress.any(SocketFamily.IPV4);
+        var socket = new InetSocketAddress(addr, this.port);
         main_loop = new MainLoop();
 
         try {
@@ -70,8 +70,8 @@ public class VSGI.SimpleServer : VSGI.Server {
     }
 
     private Gee.Map<string, string> parse_headers(DataInputStream input) {
-        Gee.HashMap<string, string> headers = new Gee.HashMap<string, string>();
-        string req_line = "";
+        var headers = new Gee.HashMap<string, string>();
+        var req_line = "";
         size_t size = 0;
         try {
              req_line = input.read_line(out size);
@@ -80,7 +80,7 @@ public class VSGI.SimpleServer : VSGI.Server {
                 e.message);
         }
         while(size != 0) {
-            string[] header = req_line.split(": ", 2);
+            var header = req_line.split(": ", 2);
             headers[header[0]] = header[1];
             try {
                  req_line= input.read_line(out size);
@@ -93,7 +93,7 @@ public class VSGI.SimpleServer : VSGI.Server {
     }
 
     private bool send_response(OutputStream output, Response response) {
-        StringBuilder builder = new StringBuilder();
+        var builder = new StringBuilder();
         builder.append_printf("%s %s %s\r\n", VSGI.Protocol.HTTP1_1.to_string(),
             response.status.to_string(), response.status.message());
         foreach (var header in response.headers.entries) {
@@ -102,13 +102,13 @@ public class VSGI.SimpleServer : VSGI.Server {
         builder.append("\r\n");
         try {
             size_t  written = 0;
-            uint8[] data    = builder.data;
-            size_t  length  = builder.len;
+            var     data    = builder.data;
+            var  length  = builder.len;
             while (written < length) {
                 written += output.write(data[written:length]);
             }
             response.headers_sent();
-            foreach (Bytes chunk in response.body) {
+            foreach (var chunk in response.body) {
                 written = 0;
                 data = chunk.get_data();
                 length = chunk.length;
@@ -134,8 +134,8 @@ public class VSGI.SimpleServer : VSGI.Server {
         remote_port = 0;
         server_addr = "";
         server_port = 0;
-        Posix.SockAddrIn local_sock_addr = Posix.SockAddrIn();
-        Posix.SockAddrIn remote_sock_addr = Posix.SockAddrIn();
+        var local_sock_addr = Posix.SockAddrIn();
+        var remote_sock_addr = Posix.SockAddrIn();
 
         try {
             if (!conn.get_local_address().to_native(
@@ -167,8 +167,8 @@ public class VSGI.SimpleServer : VSGI.Server {
                                     out string query_string)
                                     throws ParseRequestError {
 
-        string[] req = request_line.split(" ");
-        VSGI.Method? _method = VSGI.Method.from_string(req[0]);
+        var req = request_line.split(" ");
+        var _method = VSGI.Method.from_string(req[0]);
         /* Invalid Method */
         if (_method == null) {
             throw new ParseRequestError.UNSUPPORTED_METHOD(
@@ -177,16 +177,16 @@ public class VSGI.SimpleServer : VSGI.Server {
         method = (!) _method;
 
         /* Invalid Protocol */
-        VSGI.Protocol? _protocol = VSGI.Protocol.from_string(req[2]);
+        var _protocol = VSGI.Protocol.from_string(req[2]);
         if (_protocol == null) {
             throw new ParseRequestError.UNSUPPORTED_PROTOCOL(
                 "Unsupported HTTP Protocol version '%s'", req[2]);
         }
         protocol = (!) _protocol;
 
-        string[] url = req[1].split("?", 2);
+        var url = req[1].split("?", 2);
 
-        string? _path = Uri.unescape_string(url[0]);
+        var _path = Uri.unescape_string(url[0]);
         /* Invalid Path */
         if (_path == null) {
             throw new ParseRequestError.INVALID_URL(
@@ -194,7 +194,7 @@ public class VSGI.SimpleServer : VSGI.Server {
         }
         path = (!) _path;
 
-        string? _query_string = Uri.unescape_string(url[1]);
+        var _query_string = Uri.unescape_string(url[1]);
         query_string = (_query_string == null) ? "" : (!) _query_string;
 
         return true;
@@ -213,8 +213,8 @@ public class VSGI.SimpleServer : VSGI.Server {
             return false;
         }
 
-        DataInputStream input = new DataInputStream(conn.input_stream);
-        OutputStream output = conn.output_stream;
+        var input = new DataInputStream(conn.input_stream);
+        var output = conn.output_stream;
         input.set_newline_type(DataStreamNewlineType.CR_LF);
 
         return input_handler(remote_addr, remote_port, server_addr, server_port,
@@ -225,11 +225,11 @@ public class VSGI.SimpleServer : VSGI.Server {
                                string server_addr, uint16 server_port,
                                DataInputStream input, OutputStream output,
                                IsConnectedFunc connected) {
-        string script_name = "";
-        VSGI.Scheme scheme = VSGI.Scheme.HTTP;
+        var script_name = "";
+        var scheme = VSGI.Scheme.HTTP;
 
         while (connected()) {
-            string req_line = "";
+            var req_line = "";
             size_t size = 0;
 
             /* Parse Initial Request */
@@ -268,19 +268,19 @@ public class VSGI.SimpleServer : VSGI.Server {
             }
 
             /* Parse Request Headers */
-            Gee.Map<string, string> headers = parse_headers(input);
+            var headers = parse_headers(input);
 
-            bool connection_close = (headers["Connection"] == "close");
+            var connection_close = (headers["Connection"] == "close");
 
             /* Form Internal Request */
-            VSGI.IterableByteStream body = new VSGI.IterableByteStream(input);
-            VSGI.Request request = new VSGI.Request(method, script_name,
-                path_info, query_string, remote_addr, remote_port, server_addr,
+            var body = new VSGI.IterableByteStream(input);
+            var request = new VSGI.Request(method, script_name, path_info,
+                query_string, remote_addr, remote_port, server_addr,
                 server_port, protocol, scheme, headers, body);
             request.headers_recieved();
 
             /* Call App */
-            VSGI.Response response = this.app.call(request);
+            var response = this.app.call(request);
 
             /* Send Response */
             if (!send_response(output, response))

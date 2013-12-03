@@ -39,7 +39,7 @@ public class Chunked : Object, Application, CompositeApp {
      * {@inheritDoc}
      */
     public Response call(Request request) {
-        Response response = app.call(request);
+        var response = app.call(request);
 
         if (request.protocol != Protocol.HTTP1_0 &&
                 response.status.has_entity() &&

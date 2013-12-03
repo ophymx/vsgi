@@ -96,15 +96,15 @@ public class ChunkedBytesIter : Object, Gee.Iterator<Bytes> {
     public new Bytes get() {
         switch (state) {
             case State.PROCESSING:
-                Bytes chunk = chunks_iter.get();
-                size_t size = chunk.get_size();
+                var chunk = chunks_iter.get();
+                var size = chunk.get_size();
                 /* Skip empty bytes since this finishes the chunked stream */
                 if (size == 0 && chunks_iter.has_next()) {
                     next();
                     return get();
                 }
                 /* size of chunk + 16 for size string + 4 for line breaks */
-                ByteArray bytes = new ByteArray.sized((uint) size + 16 + 4);
+                var bytes = new ByteArray.sized((uint) size + 16 + 4);
                 bytes.append(size_to_hex(size).data);
                 bytes.append(TERM);
                 bytes.append(chunk.get_data());

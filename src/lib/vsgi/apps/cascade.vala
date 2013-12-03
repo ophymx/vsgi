@@ -40,7 +40,7 @@ public class Cascade : Object, Application {
         this.apps = apps;
 
         this.catches = new Gee.HashSet<uint>();
-        foreach (uint status in catches)
+        foreach (var status in catches)
             this.catches.add(status);
     }
 
@@ -48,10 +48,10 @@ public class Cascade : Object, Application {
      * {@inheritDoc}
      */
     public Response call(Request request) {
-        Response default_response = NotFound.static_call(request);
+        var default_response = NotFound.static_call(request);
 
-        foreach (Application app in apps){
-            Response response = app.call(request);
+        foreach (var app in apps){
+            var response = app.call(request);
             if (!(response.status in catches))
                 return response;
         }

@@ -68,7 +68,7 @@ public class CompositeStack : Object, Application, CompositeApp {
     private void restack() {
         CompositeApp previous = new PassThrough();
 
-        foreach (CompositeApp app in apps) {
+        foreach (var app in apps) {
             previous.app = app;
             previous = app;
         }

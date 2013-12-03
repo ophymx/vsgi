@@ -46,13 +46,13 @@ public class SuffixMapper : Object, Application, CompositeApp {
      */
     public Response call(Request request) {
         assert(app != null);
-        Response original_response = app.call(request);
+        var original_response = app.call(request);
         if (original_response.status != 404)
             return original_response;
 
         Response response;
-        string path_info = request.path_info;
-        foreach (string suffix in suffixes) {
+        var path_info = request.path_info;
+        foreach (var suffix in suffixes) {
             request.path_info = path_info + suffix;
             response = app.call(request);
             if (response.status != 404)

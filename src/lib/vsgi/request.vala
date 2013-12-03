@@ -141,9 +141,9 @@ public class Request : Object {
     public Request.from_cgi(Gee.Map<string, string> cgi_env,
         Gee.Iterable<Bytes> body) {
         headers = new Gee.HashMap<string, string>();
-        foreach(Gee.Map.Entry<string, string> cgi_var in cgi_env.entries) {
-            string key = cgi_var.key;
-            string val = cgi_var.value;
+        foreach(var cgi_var in cgi_env.entries) {
+            var key = cgi_var.key;
+            var val = cgi_var.value;
             switch(key) {
                 case "AUTH_TYPE":
                     break;
@@ -204,7 +204,7 @@ public class Request : Object {
      * @return combined script_name and path_info.
      */
     public string path() {
-        StringBuilder builder = new StringBuilder(script_name);
+        var builder = new StringBuilder(script_name);
         builder.append(path_info);
         return builder.str;
     }
@@ -213,7 +213,7 @@ public class Request : Object {
      * @return combined path and query_string.
      */
     public string full_path() {
-        StringBuilder builder = new StringBuilder(path());
+        var builder = new StringBuilder(path());
         if (query_string.length > 0)
             builder.printf("?%s", query_string);
         return builder.str;
@@ -223,7 +223,7 @@ public class Request : Object {
      * @return full url
      */
     public string full_url() {
-        StringBuilder builder = new StringBuilder();
+        var builder = new StringBuilder();
         builder.printf("%s://%s", scheme.to_string(), host());
         if (server_port != scheme.default_port()) {
             builder.append_printf(":%u", server_port);
@@ -267,18 +267,18 @@ public class Request : Object {
             !other.headers.keys.contains_all(headers.keys)) {
             return false;
         }
-        foreach (string key in headers.keys) {
+        foreach (var key in headers.keys) {
             if (headers[key] != other.headers[key]) {
                 return false;
             }
         }
 
-        ByteArray body_data = new ByteArray();
-        foreach (Bytes chunk in body) {
+        var body_data = new ByteArray();
+        foreach (var chunk in body) {
             body_data.append(chunk.get_data());
         }
-        ByteArray other_body_data = new ByteArray();
-        foreach (Bytes chunk in other.body) {
+        var other_body_data = new ByteArray();
+        foreach (var chunk in other.body) {
             other_body_data.append(chunk.get_data());
         }
         if (body_data.len != other_body_data.len)
@@ -312,7 +312,7 @@ public class Request : Object {
                 "script_name must not be '/' but instead be empty");
 
         if (headers.has_key("Content-Length")) {
-            string content_length = headers["Content-Length"];
+            var content_length = headers["Content-Length"];
             if (uint64.parse(content_length).to_string() !=
                     content_length.strip())
                 throw new InvalidRequest.INVALID_CONTENT_LENGTH(

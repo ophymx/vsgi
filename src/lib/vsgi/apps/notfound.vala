@@ -40,13 +40,14 @@ public class NotFound : Object, Application {
      * Static call to avoid instantiating an instance.
      */
     public static Response static_call(Request request) {
-        Gee.HashMap<string, string> headers = new Gee.HashMap<string, string>();
 
-        string message = "Not Found: '%s'\r\n".printf(request.full_path());
+        var message = "Not Found: '%s'\r\n".printf(request.full_path());
 
-        Body body = new Body.from_string(message);
+        var headers = new Gee.HashMap<string, string>();
         headers["Content-Type"] = "text/plain";
         headers["Content-Length"] = message.length.to_string();
+
+        var body = new Body.from_string(message);
 
         return new Response(404, headers, body);
     }

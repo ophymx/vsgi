@@ -1,7 +1,7 @@
 namespace VSGI.Utils {
 
 public string cgi_var_to_header(string cgi_variable) {
-    string cgi_var = cgi_variable.down();
+    var cgi_var = cgi_variable.down();
     if (cgi_var.has_prefix("http_"))
         cgi_var = cgi_var.substring(cgi_var.index_of_nth_char(5));
 
@@ -17,7 +17,7 @@ public string cgi_var_to_header(string cgi_variable) {
 
         default:
             StringBuilder builder = new StringBuilder();
-            foreach(string token in cgi_var.split_set("_-")) {
+            foreach(var token in cgi_var.split_set("_-")) {
                 builder.append(token.up(1));
                 builder.append(token.substring(token.index_of_nth_char(1)));
                 builder.append("-");

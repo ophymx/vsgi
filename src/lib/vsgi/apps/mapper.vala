@@ -60,11 +60,11 @@ public class Mapper : Object, Application, CompositeApp {
      */
     public Response call(Request request) {
         assert(app != null);
-        string path = request.path_info;
+        var path = request.path_info;
 
         foreach (var entry in apps.entries) {
-            string starts_with = entry.key;
-            Application app = entry.value;
+            var starts_with = entry.key;
+            var app = entry.value;
             if (path.has_prefix(starts_with)) {
                 request.script_name += starts_with;
                 request.path_info = path.substring(starts_with.length);

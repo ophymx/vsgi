@@ -17,7 +17,7 @@ void stdout_logfunc(string? domain, LogLevelFlags levels, string message) {
 }
 
 int main() {
-    foreach (string domain in LOG_DOMAINS) {
+    foreach (var domain in LOG_DOMAINS) {
         Log.set_handler(domain, LogLevelFlags.LEVEL_MASK, stdout_logfunc);
     }
 
@@ -28,7 +28,7 @@ int main() {
         error("%s", e.message);
     }
 
-    foreach (int signum in STOP_SIGNALS) {
+    foreach (var signum in STOP_SIGNALS) {
         Posix.signal(signum, (s) => { ws.stop(); });
     }
 

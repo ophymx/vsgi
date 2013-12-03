@@ -20,7 +20,7 @@
  *      Jeffrey T. Peckham <abic@ophymx.com>
  */
 VSGI.Request mock_request() {
-    Gee.HashMap<string, string> headers = new Gee.HashMap<string, string>();
+    var headers = new Gee.HashMap<string, string>();
     headers["User-Agent"] = "Mock Agent";
     headers["Host"] = "myhost";
     headers["Accept"] = "*/*";
@@ -43,13 +43,13 @@ VSGI.Request mock_request() {
 }
 
 string body_to_string(Gee.Iterable<Bytes> body) {
-    ByteArray buf = new ByteArray();
+    var buf = new ByteArray();
 
-    foreach(Bytes chunk in body) {
+    foreach(var chunk in body) {
         buf.append(chunk.get_data());
     }
 
-    uint8[] data = buf.data;
+    var data = buf.data;
     data += 0;
 
     return (string) data;

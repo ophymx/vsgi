@@ -45,7 +45,7 @@ public class Lint : Object, Application, CompositeApp {
         } catch (InvalidRequest e) {
             log("VSGI.Lint", LogLevelFlags.LEVEL_ERROR, "%s", e.message);
         }
-        Response response = app.call(request);
+        var response = app.call(request);
         try {
             response.validate();
         } catch (InvalidResponse e) {

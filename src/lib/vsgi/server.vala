@@ -72,7 +72,7 @@ public abstract class Server {
      * @return true if successfully loaded
      */
     public bool load_app(string setup_file) throws AppLoadError {
-        Module module = Module.open(setup_file, ModuleFlags.BIND_MASK);
+        var module = Module.open(setup_file, ModuleFlags.BIND_MASK);
 
         if (module == null) {
             throw new AppLoadError.MODULE_OPEN(

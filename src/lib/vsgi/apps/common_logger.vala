@@ -42,10 +42,10 @@ public class CommonLogger : Object, Application, CompositeApp {
     public Response call(Request request) {
         assert(this.app != null);
 
-        Response response = app.call(request);
+        var response = app.call(request);
 
         response.body_sent.connect(() => {
-            Time now = Time.local((time_t) new DateTime.now_utc().to_unix());
+            var now = Time.local((time_t) new DateTime.now_utc().to_unix());
 
             log("VSGI.CommonLogger", LogLevelFlags.LEVEL_INFO, FORMAT,
                 request.remote_addr,
