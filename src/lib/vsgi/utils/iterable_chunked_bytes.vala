@@ -24,7 +24,7 @@ namespace VSGI {
 /**
  *
  */
-public class IterableChunkedBytes : Object, Gee.Iterable<Bytes> {
+public class IterableChunkedBytes : IterableBytes, Gee.Iterable<Bytes> {
 
     private Gee.Iterable<Bytes> chunks;
 
@@ -37,7 +37,7 @@ public class IterableChunkedBytes : Object, Gee.Iterable<Bytes> {
         this.chunks = chunks;
     }
 
-    public Gee.Iterator<Bytes> iterator(){
+    public override Gee.Iterator<Bytes> iterator(){
         return new ChunkedBytesIter(chunks.iterator());
     }
 
@@ -46,20 +46,28 @@ public class IterableChunkedBytes : Object, Gee.Iterable<Bytes> {
 /**
  *
  */
-public class ChunkedBytesIter : Object, Gee.Iterator<Bytes> {
+public class ChunkedBytesIter : BytesIterator, Gee.Iterator<Bytes> {
 
     private const uint8[] TAIL = {'0', '\r', '\n', '\r', '\n'};
     private const uint8[] TERM = {'\r', '\n'};
     private const uint8[] ZLEN = {};
 
     private enum State {
-        PROCESSING,
+        INIT,
+        ON_TRACK,
         LAST,
-        FINISHED
+        END,
+        OFF_TRACK;
+
+        public bool valid() {
+            return this != INIT && this != OFF_TRACK;
+        }
     }
 
     private Gee.Iterator<Bytes> chunks_iter;
-    private State state = State.PROCESSING;
+    private State state = State.INIT;
+
+    public bool valid { get { return state.valid(); }}
 
     /**
      *
@@ -68,16 +76,18 @@ public class ChunkedBytesIter : Object, Gee.Iterator<Bytes> {
         this.chunks_iter = chunks_iter;
     }
 
-    public bool next() {
+    public override bool next() {
         switch (state) {
-            case State.PROCESSING:
+            case State.INIT:
+            case State.ON_TRACK:
+            case State.OFF_TRACK:
                 if (!chunks_iter.next())
                     state = State.LAST;
                 return true;
             case State.LAST:
-                state = State.FINISHED;
+                state = State.END;
                 return false;
-            case State.FINISHED:
+            case State.END:
                 return false;
             default:
                 return false;
@@ -85,17 +95,14 @@ public class ChunkedBytesIter : Object, Gee.Iterator<Bytes> {
     }
 
     public bool has_next() {
-        return (state != State.FINISHED);
+        return (state != State.END);
     }
 
-    public bool first() {
-        state = State.PROCESSING;
-        return chunks_iter.first();
-    }
-
-    public new Bytes get() {
+    public override Bytes get() {
         switch (state) {
-            case State.PROCESSING:
+            case State.INIT:
+            case State.ON_TRACK:
+            case State.OFF_TRACK:
                 var chunk = chunks_iter.get();
                 var size = chunk.get_size();
                 /* Skip empty bytes since this finishes the chunked stream */
@@ -113,7 +120,7 @@ public class ChunkedBytesIter : Object, Gee.Iterator<Bytes> {
                 return ByteArray.free_to_bytes((owned) bytes);
             case State.LAST:
                 return new Bytes.static(TAIL);
-            case State.FINISHED:
+            case State.END:
                 return new Bytes.static(ZLEN);
             default:
                 assert_not_reached();
@@ -125,7 +132,7 @@ public class ChunkedBytesIter : Object, Gee.Iterator<Bytes> {
     }
 
     public void remove() {
-        if (state == State.PROCESSING)
+        if (state == State.OFF_TRACK)
             chunks_iter.remove();
     }
 }

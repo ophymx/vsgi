@@ -24,7 +24,7 @@ namespace VSGI {
 /**
  * A fairly simple wrapper class for holding the body of a response/request
  */
-public class Body : Object, Gee.Iterable<Bytes> {
+public class Body : IterableBytes, Gee.Iterable<Bytes> {
 
     private Bytes body;
 
@@ -52,33 +52,37 @@ public class Body : Object, Gee.Iterable<Bytes> {
         body = new Bytes({});
     }
 
-    public Gee.Iterator<Bytes> iterator() {
+    public override Gee.Iterator<Bytes> iterator() {
         return new BodyIter(body);
     }
-
 }
 
 /**
  *
  */
-public class BodyIter : Object, Gee.Iterator<Bytes> {
+public class BodyIter : BytesIterator, Gee.Iterator<Bytes> {
 
     private enum State {
         INIT,
         ON_TRACK,
         END,
         OFF_TRACK;
+
+        public bool valid() {
+            return this != OFF_TRACK && this != INIT;
+        }
     }
 
     private Bytes body;
-    private State state;
+    private State state = State.INIT;
+
+    public bool valid { get { return state.valid(); } }
 
     public BodyIter(Bytes body) {
         this.body = body;
-        state = State.INIT;
     }
 
-    public bool next() {
+    public override bool next() {
         if (state == State.INIT) {
             state = State.ON_TRACK;
             return true;
@@ -93,12 +97,7 @@ public class BodyIter : Object, Gee.Iterator<Bytes> {
         return state == State.INIT;
     }
 
-    public bool first() {
-        state = State.ON_TRACK;
-        return true;
-    }
-
-    public new Bytes get() {
+    public override Bytes get() {
         assert(state == State.ON_TRACK);
         return body;
     }
@@ -106,7 +105,6 @@ public class BodyIter : Object, Gee.Iterator<Bytes> {
     public void remove() {
         state = State.OFF_TRACK;
     }
-
 }
 
 }
