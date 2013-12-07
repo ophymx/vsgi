@@ -47,12 +47,10 @@ public class Echo : Object, Application {
         var body = new Gee.ArrayList<Bytes>();
         var r = request;
         var builder = new StringBuilder();
-        builder.append_printf("Connection: %s:%s -> %s://%s:%s\r\n",
-            r.remote_addr,
-            r.remote_port.to_string(),
-            r.scheme.to_string(),
-            r.server_addr,
-            r.server_port.to_string()
+        var ci = r.connection_info;
+        builder.append_printf("Connection: %s -> %s\r\n",
+            ci.remote.to_string(),
+            ci.local_url()
         );
         builder.append_printf("Method: %s\r\n", r.method.to_string());
         builder.append_printf("ScriptName: %s\r\n", r.script_name);

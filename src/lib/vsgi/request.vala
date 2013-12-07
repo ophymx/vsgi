@@ -21,15 +21,60 @@
  */
 namespace VSGI {
 
-/**
- *
- */
 public errordomain InvalidRequest {
     UNKNOWN_METHOD,
     INVALID_SCRIPT_NAME,
     INVALID_PATH,
     INVALID_CONTENT_LENGTH,
     MISSING_PATH_AND_SCRIPT_NAME
+}
+
+public struct AddressPort {
+    public string addr;
+    public uint16 port;
+
+    public AddressPort.default() {
+        addr = "0.0.0.0";
+        port = 0;
+    }
+
+    public string to_string() {
+        return "%s:%s".printf(addr, port.to_string());
+    }
+
+    public bool equal(AddressPort other) {
+        return addr == other.addr && port == other.port;
+    }
+}
+
+public struct ConnectionInfo {
+    public Scheme scheme;
+    public AddressPort remote;
+    public AddressPort local;
+
+    public ConnectionInfo.default() {
+        scheme = Scheme.HTTP;
+        remote = AddressPort.default();
+        local  = AddressPort.default();
+    }
+
+    public bool equal(ConnectionInfo other) {
+        return scheme == other.scheme &&
+                remote.equal(other.remote) &&
+                local.equal(other.local);
+    }
+
+    public string local_url(string? host=null) {
+        if (host == null) {
+            host = local.addr;
+        }
+        var builder = new StringBuilder();
+        builder.printf("%s://%s", scheme.to_string(), host);
+        if (local.port != scheme.default_port()) {
+            builder.append_printf(":%u", local.port);
+        }
+        return builder.str;
+    }
 }
 
 /**
@@ -59,7 +104,11 @@ public class Request : Object {
     /**
      *
      */
-    public string remote_addr { get; private set; }
+    public ConnectionInfo connection_info {
+        get;
+        private set;
+        default = ConnectionInfo.default();
+    }
     /**
      *
      */
@@ -67,27 +116,11 @@ public class Request : Object {
     /**
      *
      */
-    public uint16 remote_port { get; private set; default = 0; }
-    /**
-     *
-     */
-    public string server_addr { get; private set; }
-    /**
-     *
-     */
-    public uint16 server_port { get; private set; }
-    /**
-     *
-     */
-    public string server_software { get; private set; }
+    public string server_software { get; private set; default = ""; }
     /**
      *
      */
     public Protocol protocol { get; private set; default = Protocol.HTTP1_1; }
-    /**
-     *
-     */
-    public Scheme scheme { get; private set; default = Scheme.HTTP; }
     /**
      *
      */
@@ -102,10 +135,8 @@ public class Request : Object {
      * @param script_name  path of script invoked by request
      * @param path_info    path of the request after the script
      * @param query_string query string in request
-     * @param server_addr  server address
-     * @param server_port  server port
+     * @param conn_info    connection information {@link Vsgi.ConnectionInfo}
      * @param protocol     http protocol (1.0 or 1.1) {@link VSGI.Protocol}
-     * @param scheme       scheme (http or https) {@link VSGI.Scheme}
      * @param headers      request headers
      * @param body         request body as an iterable collection of Bytes
      * @return             newly created request
@@ -114,12 +145,8 @@ public class Request : Object {
                    string script_name,
                    string path_info,
                    string query_string,
-                   string remote_addr,
-                   uint16 remote_port,
-                   string server_addr,
-                   uint16 server_port,
+                   ConnectionInfo conn_info,
                    Protocol protocol,
-                   Scheme scheme,
                    Gee.Map<string, string> headers,
                    Gee.Iterable<Bytes> body) {
 
@@ -127,12 +154,8 @@ public class Request : Object {
         this.script_name = script_name;
         this.path_info = path_info;
         this.query_string = query_string;
-        this.remote_addr = remote_addr;
-        this.remote_port = remote_port;
-        this.server_addr = server_addr;
-        this.server_port = server_port;
+        this.connection_info = conn_info;
         this.protocol = protocol;
-        this.scheme = scheme;
 
         this.headers = headers;
         this.body = body;
@@ -164,7 +187,7 @@ public class Request : Object {
                     query_string = val;
                     break;
                 case "REMOTE_ADDR":
-                    remote_addr = val;
+                    connection_info.remote.addr = val;
                     break;
                 case "REMOTE_HOST":
                     break;
@@ -179,10 +202,10 @@ public class Request : Object {
                     script_name = val;
                     break;
                 case "SERVER_NAME":
-                    server_addr = val;
+                    connection_info.local.addr = val;
                     break;
                 case "SERVER_PORT":
-                    server_port = (uint16) int.parse(val);
+                    connection_info.local.port = (uint16) int.parse(val);
                     break;
                 case "SERVER_PROTOCOL":
                     protocol = Protocol.from_string(val);
@@ -223,13 +246,7 @@ public class Request : Object {
      * @return full url
      */
     public string full_url() {
-        var builder = new StringBuilder();
-        builder.printf("%s://%s", scheme.to_string(), host());
-        if (server_port != scheme.default_port()) {
-            builder.append_printf(":%u", server_port);
-        }
-        builder.append(full_path());
-        return builder.str;
+        return connection_info.local_url(headers["Host"]) + full_path();
     }
 
     /**
@@ -239,7 +256,7 @@ public class Request : Object {
         if (headers.has_key("Host")) {
             return headers["Host"];
         } else {
-            return server_addr;
+            return connection_info.local.addr;
         }
     }
 
@@ -258,11 +275,8 @@ public class Request : Object {
             script_name  != other.script_name  ||
             path_info    != other.path_info    ||
             query_string != other.query_string ||
-            remote_addr  != other.remote_addr  ||
-            server_addr  != other.server_addr  ||
-            server_port  != other.server_port  ||
             protocol     != other.protocol     ||
-            scheme       != other.scheme       ||
+            !connection_info.equal(other.connection_info) ||
             !headers.keys.contains_all(other.headers.keys) ||
             !other.headers.keys.contains_all(headers.keys)) {
             return false;

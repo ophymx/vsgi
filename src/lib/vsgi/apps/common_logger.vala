@@ -48,7 +48,7 @@ public class CommonLogger : Object, Application, CompositeApp {
             var now = Time.local((time_t) new DateTime.now_utc().to_unix());
 
             log("VSGI.CommonLogger", LogLevelFlags.LEVEL_INFO, FORMAT,
-                request.remote_addr,
+                request.connection_info.remote.addr,
                 request.remote_user.length != 0 ?  request.remote_user : "-",
                 now.format(TIME_FORMAT),
                 request.method.to_string(),

@@ -125,39 +125,33 @@ public class VSGI.SimpleServer : VSGI.Server {
         return true;
     }
 
-    private bool get_connection_values(SocketConnection conn,
-                                        out string remote_addr,
-                                        out uint16 remote_port,
-                                        out string server_addr,
-                                        out uint16 server_port) {
-        remote_addr = "";
-        remote_port = 0;
-        server_addr = "";
-        server_port = 0;
+    private ConnectionInfo? get_connection_info(SocketConnection conn) {
+        var conn_info = new ConnectionInfo();
         var local_sock_addr = Posix.SockAddrIn();
         var remote_sock_addr = Posix.SockAddrIn();
 
         try {
             if (!conn.get_local_address().to_native(
                     &local_sock_addr, sizeof(Posix.SockAddrIn))) {
-                return false;
+                return null;
             }
             if (!conn.get_remote_address().to_native(
                     &remote_sock_addr, sizeof(Posix.SockAddrIn))) {
-                return false;
+                return null;
             }
         } catch (Error e) {
             log("VSGI.SimpleServer", LogLevelFlags.LEVEL_WARNING, "%s",
                 e.message);
-            return false;
+            return null;
         }
 
-        remote_addr = Posix.inet_ntoa(remote_sock_addr.sin_addr);
-        remote_port = Posix.ntohs(remote_sock_addr.sin_port);
-        server_addr = Posix.inet_ntoa(local_sock_addr.sin_addr);
-        server_port = Posix.ntohs(local_sock_addr.sin_port);
+        conn_info.scheme = VSGI.Scheme.HTTP;
+        conn_info.remote.addr = Posix.inet_ntoa(remote_sock_addr.sin_addr);
+        conn_info.remote.port = Posix.ntohs(remote_sock_addr.sin_port);
+        conn_info.local.addr = Posix.inet_ntoa(local_sock_addr.sin_addr);
+        conn_info.local.port = Posix.ntohs(local_sock_addr.sin_port);
 
-        return true;
+        return conn_info;
     }
 
     private bool parse_request_line(string request_line,
@@ -204,12 +198,8 @@ public class VSGI.SimpleServer : VSGI.Server {
 
     private bool connection_handler(SocketConnection conn) {
         /* Get Connection Info */
-        string remote_addr;
-        uint16 remote_port;
-        string server_addr;
-        uint16 server_port;
-        if (!get_connection_values(conn, out remote_addr, out remote_port,
-                out server_addr, out server_port)) {
+        var conn_info = get_connection_info(conn);
+        if (conn_info == null) {
             return false;
         }
 
@@ -217,16 +207,14 @@ public class VSGI.SimpleServer : VSGI.Server {
         var output = conn.output_stream;
         input.set_newline_type(DataStreamNewlineType.CR_LF);
 
-        return input_handler(remote_addr, remote_port, server_addr, server_port,
-            input, output, () => { return conn.is_connected(); });
+        IsConnectedFunc connected = () => { return conn.is_connected(); };
+        return input_handler(input, output, conn_info, connected);
     }
 
-    private bool input_handler(string remote_addr, uint16 remote_port,
-                               string server_addr, uint16 server_port,
-                               DataInputStream input, OutputStream output,
+    private bool input_handler(DataInputStream input, OutputStream output,
+                               ConnectionInfo conn_info,
                                IsConnectedFunc connected) {
         var script_name = "";
-        var scheme = VSGI.Scheme.HTTP;
 
         while (connected()) {
             var req_line = "";
@@ -275,8 +263,7 @@ public class VSGI.SimpleServer : VSGI.Server {
             /* Form Internal Request */
             var body = new VSGI.IterableByteStream(input);
             var request = new VSGI.Request(method, script_name, path_info,
-                query_string, remote_addr, remote_port, server_addr,
-                server_port, protocol, scheme, headers, body);
+                query_string, conn_info, protocol, headers, body);
             request.headers_recieved();
 
             /* Call App */
