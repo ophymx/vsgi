@@ -126,7 +126,6 @@ public class VSGI.SimpleServer : VSGI.Server {
     }
 
     private ConnectionInfo? get_connection_info(SocketConnection conn) {
-        var conn_info = new ConnectionInfo();
         var local_sock_addr = Posix.SockAddrIn();
         var remote_sock_addr = Posix.SockAddrIn();
 
@@ -145,11 +144,18 @@ public class VSGI.SimpleServer : VSGI.Server {
             return null;
         }
 
-        conn_info.scheme = VSGI.Scheme.HTTP;
-        conn_info.remote.addr = Posix.inet_ntoa(remote_sock_addr.sin_addr);
-        conn_info.remote.port = Posix.ntohs(remote_sock_addr.sin_port);
-        conn_info.local.addr = Posix.inet_ntoa(local_sock_addr.sin_addr);
-        conn_info.local.port = Posix.ntohs(local_sock_addr.sin_port);
+        var conn_info = ConnectionInfo() {
+            scheme = Scheme.HTTP,
+            remote = AddressPort() {
+                addr = Posix.inet_ntoa(remote_sock_addr.sin_addr),
+                port = Posix.ntohs(remote_sock_addr.sin_port)
+            },
+            local = AddressPort() {
+                addr = Posix.inet_ntoa(local_sock_addr.sin_addr),
+                port = Posix.ntohs(local_sock_addr.sin_port)
+            }
+        };
+
 
         return conn_info;
     }
@@ -262,8 +268,8 @@ public class VSGI.SimpleServer : VSGI.Server {
 
             /* Form Internal Request */
             var body = new VSGI.IterableByteStream(input);
-            var request = new VSGI.Request(method, script_name, path_info,
-                query_string, conn_info, protocol, headers, body);
+            var request = new VSGI.Request(conn_info, method, script_name,
+                path_info, query_string, protocol, headers, body);
             request.headers_recieved();
 
             /* Call App */

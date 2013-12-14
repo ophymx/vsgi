@@ -29,57 +29,6 @@ public errordomain InvalidRequest {
     MISSING_PATH_AND_SCRIPT_NAME
 }
 
-public struct AddressPort {
-    public string addr;
-    public uint16 port;
-
-    public AddressPort.default() {
-        addr = "0.0.0.0";
-        port = 0;
-    }
-
-    public string to_string() {
-        return "%s:%s".printf(addr, port.to_string());
-    }
-
-    public bool equal(AddressPort other) {
-        return addr == other.addr && port == other.port;
-    }
-}
-
-public struct ConnectionInfo {
-    public Scheme scheme;
-    public AddressPort remote;
-    public AddressPort local;
-
-    public ConnectionInfo.default() {
-        scheme = Scheme.HTTP;
-        remote = AddressPort.default();
-        local  = AddressPort.default();
-    }
-
-    public bool equal(ConnectionInfo other) {
-        return scheme == other.scheme &&
-                remote.equal(other.remote) &&
-                local.equal(other.local);
-    }
-
-    public string local_url(string? host=null) {
-        if (host == null) {
-            host = local.addr;
-        }
-        var builder = new StringBuilder();
-        builder.printf("%s://%s", scheme.to_string(), host);
-        if (local.port != scheme.default_port()) {
-            builder.append_printf(":%u", local.port);
-        }
-        return builder.str;
-    }
-}
-
-/**
- *
- */
 public class Request : Object {
 
     public signal void headers_recieved();
@@ -141,20 +90,21 @@ public class Request : Object {
      * @param body         request body as an iterable collection of Bytes
      * @return             newly created request
      */
-    public Request(Method method,
+    public Request(ConnectionInfo conn_info,
+                   Method method,
                    string script_name,
                    string path_info,
                    string query_string,
-                   ConnectionInfo conn_info,
                    Protocol protocol,
                    Gee.Map<string, string> headers,
                    Gee.Iterable<Bytes> body) {
+
+        this.connection_info = conn_info;
 
         this.method = method;
         this.script_name = script_name;
         this.path_info = path_info;
         this.query_string = query_string;
-        this.connection_info = conn_info;
         this.protocol = protocol;
 
         this.headers = headers;
@@ -164,7 +114,7 @@ public class Request : Object {
     public Request.from_cgi(Gee.Map<string, string> cgi_env,
         Gee.Iterable<Bytes> body) {
         headers = new Gee.HashMap<string, string>();
-        foreach(var cgi_var in cgi_env.entries) {
+        foreach (var cgi_var in cgi_env.entries) {
             var key = cgi_var.key;
             var val = cgi_var.value;
             switch(key) {
@@ -194,6 +144,7 @@ public class Request : Object {
                 case "REMOTE_IDENT":
                     break;
                 case "REMOTE_USER":
+                    remote_user = val;
                     break;
                 case "REQUEST_METHOD":
                     method = Method.from_string(val);

@@ -26,17 +26,22 @@ VSGI.Request mock_request() {
     headers["Accept"] = "*/*";
 
     var body = new VSGI.Body.empty();
-    var conn_info = new VSGI.ConnectionInfo();
-    conn_info.remote.addr = "10.0.0.2";
-    conn_info.remote.port = 42222;
-    conn_info.local.addr = "10.0.1.2";
-    conn_info.local.port = 8080;
+    var conn_info = VSGI.ConnectionInfo() {
+        remote = VSGI.AddressPort() {
+            addr = "10.0.0.2",
+            port = 42222
+        },
+        local = VSGI.AddressPort() {
+            addr = "10.0.1.2",
+            port = 8080
+        }
+    };
     return new VSGI.Request(
+        conn_info,
         VSGI.Method.GET,
         "/foo",
         "/bar/",
         "foo1=bar1&foo2=bar2",
-        conn_info,
         VSGI.Protocol.HTTP1_1,
         headers,
         body
