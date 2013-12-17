@@ -1,31 +1,30 @@
 namespace VSGI {
 
-public abstract class IterableBytes : Object, Gee.Traversable<Bytes> {
-    public abstract Gee.Iterator<Bytes> iterator();
+public class IterableBytesBody : Object, Body {
+    private Gee.Iterable<Bytes> body;
 
-    public bool @foreach(Gee.ForallFunc<Bytes> f) {
-        foreach(var bytes in this) {
-            if (!f(bytes)) {
-                return false;
-            }
-        }
-        return true;
+    public IterableBytesBody(Gee.Iterable<Bytes> body) {
+        this.body = body;
     }
-}
 
-public abstract class BytesIterator : Object, Gee.Traversable<Bytes> {
-    public abstract bool next();
-    public abstract new Bytes @get();
+    public BodyIterator iterator() {
+        return new Iterator(body.iterator());
+    }
 
-    public bool read_only { get { return true; }}
+    private class Iterator : Object, BodyIterator {
+        private Gee.Iterator<Bytes> iterator;
 
-    public bool @foreach(Gee.ForallFunc<Bytes> f) {
-        while (next()) {
-            if (!f(get())) {
-                return false;
-            }
+        public Iterator(Gee.Iterator<Bytes> iterator) {
+            this.iterator = iterator;
         }
-        return true;
+
+        public bool next() {
+            return iterator.next();
+        }
+
+        public new Bytes @get() {
+            return iterator.get();
+        }
     }
 }
 

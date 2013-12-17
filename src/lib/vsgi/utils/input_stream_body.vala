@@ -21,32 +21,21 @@
  */
 namespace VSGI {
 
-/**
- *
- */
-public class IterableByteStream : IterableBytes, Gee.Iterable<Bytes> {
+public class InputStreamBody : Object, Body {
 
     private InputStream input_stream;
 
-    public Type element_type { get { return typeof(Bytes); } }
-
-    /**
-     *
-     */
-    public IterableByteStream(InputStream input_stream) {
+    public InputStreamBody(InputStream input_stream) {
         this.input_stream = input_stream;
     }
 
-    public override Gee.Iterator<Bytes> iterator(){
-        return new ByteStreamIter(input_stream);
+    public BodyIterator iterator(){
+        return new InputStreamBodyIterator(input_stream);
     }
 
 }
 
-/**
- *
- */
-public class ByteStreamIter : BytesIterator, Gee.Iterator<Bytes> {
+public class InputStreamBodyIterator : Object, BodyIterator {
 
     private const int BUFFER_SIZE = 65536;
 
@@ -56,16 +45,11 @@ public class ByteStreamIter : BytesIterator, Gee.Iterator<Bytes> {
     private uint8[] current_chunk = new uint8[BUFFER_SIZE];
     private uint8[] next_chunk = new uint8[BUFFER_SIZE];
 
-    public bool valid { get { return current_chunk_size > 0; }}
-
-    /**
-     *
-     */
-    public ByteStreamIter(InputStream input_stream) {
+    public InputStreamBodyIterator(InputStream input_stream) {
         this.input_stream = input_stream;
     }
 
-    public override bool next() {
+    public bool next() {
         current_chunk = next_chunk;
         current_chunk_size = next_chunk_size;
         try {
@@ -84,19 +68,11 @@ public class ByteStreamIter : BytesIterator, Gee.Iterator<Bytes> {
         return (current_chunk_size > 0);
     }
 
-    public bool has_next() {
-        return (next_chunk_size > 0);
-    }
-
-    public override Bytes get() {
+    public new Bytes @get() {
         if (current_chunk_size != BUFFER_SIZE)
             current_chunk.resize((int) current_chunk_size);
 
         return new Bytes(current_chunk);
-    }
-
-    public void remove() {
-        assert_not_reached();
     }
 }
 

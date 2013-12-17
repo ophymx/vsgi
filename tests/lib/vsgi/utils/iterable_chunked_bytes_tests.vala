@@ -19,21 +19,22 @@
  * Author:
  *      Jeffrey T. Peckham <abic@ophymx.com>
  */
-public class IterableChunkedBytesTests : Gee.TestCase {
+public class ChunkedBodyTests : Gee.TestCase {
 
-    public IterableChunkedBytesTests() {
-        base("IterableChunkedBytes");
+    public ChunkedBodyTests() {
+        base("ChunkedBody");
         add_test("correctly chunks simple string", () => {
             var test_stream = new Gee.ArrayList<Bytes>();
             test_stream.add(new Bytes("foobar".data));
             test_stream.add(new Bytes("barbaz".data));
-            chunked_bytes = new VSGI.IterableChunkedBytes(test_stream);
+            var wrapper = new VSGI.IterableBytesBody(test_stream);
+            chunked_bytes = new VSGI.ChunkedBody(wrapper);
             var body_string = body_to_string(chunked_bytes);
             assert(body_string == "6\r\nfoobar\r\n6\r\nbarbaz\r\n0\r\n\r\n");
         });
     }
 
-    protected VSGI.IterableChunkedBytes chunked_bytes;
+    protected VSGI.ChunkedBody chunked_bytes;
 
     public override void set_up() {
     }

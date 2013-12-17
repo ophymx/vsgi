@@ -47,7 +47,7 @@ public class NotFound : Object, Application {
         headers["Content-Type"] = "text/plain";
         headers["Content-Length"] = message.length.to_string();
 
-        var body = new Body.from_string(message);
+        var body = new SimpleBody.from_string(message);
 
         return new Response(404, headers, body);
     }

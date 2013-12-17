@@ -77,7 +77,7 @@ public class Request : Object {
     /**
      *
      */
-    public Gee.Iterable<Bytes> body;
+    public Body body;
 
     /**
      * @param method       http request method {@link VSGI.Method}
@@ -97,7 +97,7 @@ public class Request : Object {
                    string query_string,
                    Protocol protocol,
                    Gee.Map<string, string> headers,
-                   Gee.Iterable<Bytes> body) {
+                   Body body) {
 
         this.connection_info = conn_info;
 
@@ -112,7 +112,7 @@ public class Request : Object {
     }
 
     public Request.from_cgi(Gee.Map<string, string> cgi_env,
-        Gee.Iterable<Bytes> body) {
+        Body body) {
         headers = new Gee.HashMap<string, string>();
         foreach (var cgi_var in cgi_env.entries) {
             var key = cgi_var.key;

@@ -51,14 +51,14 @@ public class Response : Object {
     /**
      *
      */
-    public Gee.Iterable<Bytes> body;
+    public Body body;
 
     /**
      *
      */
     public Response(Status status,
         Gee.Map<string, string> headers = new Gee.HashMap<string, string>(),
-        Gee.Iterable<Bytes> body = new Body.empty()) {
+        Body body = new SimpleBody.empty()) {
         this.status = status;
         this.headers = headers;
         this.body = body;
@@ -67,7 +67,7 @@ public class Response : Object {
     public Response.simple(Status status, string body) {
         this.status = status;
         this.headers = new Gee.HashMap<string, string>();
-        this.body = new Body.from_string(body);
+        this.body = new SimpleBody.from_string(body);
 
         headers["Content-Type"] = "text/plain";
         headers["Content-Length"] = body.length.to_string();

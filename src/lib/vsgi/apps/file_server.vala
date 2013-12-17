@@ -40,7 +40,7 @@ public class FileServer : Object, Application {
      */
     public Response call(Request request) {
         var headers = new Gee.HashMap<string, string>();
-        IterableByteStream body;
+        InputStreamBody body;
 
         try {
             bool uncertain;
@@ -57,7 +57,7 @@ public class FileServer : Object, Application {
                 FileQueryInfoFlags.NONE);
             headers["Content-Length"] = file_info.get_size().to_string();
 
-            body = new IterableByteStream(file.read());
+            body = new InputStreamBody(file.read());
         } catch(Error e) {
             return NotFound.static_call(request);
         }

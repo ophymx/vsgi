@@ -25,7 +25,7 @@ VSGI.Request mock_request() {
     headers["Host"] = "myhost";
     headers["Accept"] = "*/*";
 
-    var body = new VSGI.Body.empty();
+    var body = new VSGI.SimpleBody.empty();
     var conn_info = VSGI.ConnectionInfo() {
         remote = VSGI.AddressPort() {
             addr = "10.0.0.2",
@@ -48,7 +48,7 @@ VSGI.Request mock_request() {
     );
 }
 
-string body_to_string(Gee.Iterable<Bytes> body) {
+string body_to_string(VSGI.Body body) {
     var buf = new ByteArray();
 
     foreach(var chunk in body) {

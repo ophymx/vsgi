@@ -19,13 +19,13 @@
  * Author:
  *      Jeffrey T. Peckham <abic@ophymx.com>
  */
-public class IterableByteStreamTests : Gee.TestCase {
+public class InputStreamBodyTests : Gee.TestCase {
 
-    public IterableByteStreamTests() {
-        base("IterableByteStream");
+    public InputStreamBodyTests() {
+        base("InputStreamBody");
         add_test("can iterate over lorem ipsum correctly", () => {
             var mis = new MemoryInputStream();
-            test_stream = new VSGI.IterableByteStream(mis);
+            test_stream = new VSGI.InputStreamBody(mis);
 
             mis.add_data("Lorem ipsum dolor sit amet, consectetur ".data, free);
             mis.add_data("adipisicing elit, sed do eiusmod tempor ".data, free);
@@ -57,7 +57,7 @@ public class IterableByteStreamTests : Gee.TestCase {
         add_test("can iterate over a file stream correctly", () => {
             var test_file = File.new_for_path(ASSETS_DIR + "/test_file.txt");
             try {
-                test_stream = new VSGI.IterableByteStream(test_file.read());
+                test_stream = new VSGI.InputStreamBody(test_file.read());
                 var body_string = body_to_string(test_stream);
                 assert(body_string == "Hello World!\n");
             } catch (Error e) {
@@ -69,7 +69,7 @@ public class IterableByteStreamTests : Gee.TestCase {
             var test_file = File.new_for_path(ASSETS_DIR + "/test_file.txt");
             try {
                 var fis = test_file.read();
-                test_stream = new VSGI.IterableByteStream(fis);
+                test_stream = new VSGI.InputStreamBody(fis);
                 body_to_string(test_stream);
                 assert(fis.is_closed());
             } catch (Error e) {
@@ -80,7 +80,7 @@ public class IterableByteStreamTests : Gee.TestCase {
 
     }
 
-    protected VSGI.IterableByteStream test_stream;
+    protected VSGI.InputStreamBody test_stream;
 
     public override void set_up() {
     }

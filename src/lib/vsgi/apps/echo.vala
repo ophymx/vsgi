@@ -80,7 +80,7 @@ public class Echo : Object, Application {
         headers["Content-Length"] = length.to_string();
         headers["Content-Type"] = "text/plain";
 
-        return new Response(200, headers, body);
+        return new Response(200, headers, new IterableBytesBody(body));
     }
 }
 

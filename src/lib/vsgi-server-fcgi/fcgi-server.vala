@@ -89,7 +89,8 @@ public class VSGI.FcgiServer : VSGI.Server {
             read_size = request.in.read(buffer);
         }
 
-        var req = new VSGI.Request.from_cgi(cgi_env, body);
+        var wrapper = new IterableBytesBody(body);
+        var req = new VSGI.Request.from_cgi(cgi_env, wrapper);
         var response = this.app.call(req);
 
         request.out.printf("Status: %u\r\n", response.status);

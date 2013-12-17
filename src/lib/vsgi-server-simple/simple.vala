@@ -267,7 +267,7 @@ public class VSGI.SimpleServer : VSGI.Server {
             var connection_close = (headers["Connection"] == "close");
 
             /* Form Internal Request */
-            var body = new VSGI.IterableByteStream(input);
+            var body = new VSGI.InputStreamBody(input);
             var request = new VSGI.Request(conn_info, method, script_name,
                 path_info, query_string, protocol, headers, body);
             request.headers_recieved();

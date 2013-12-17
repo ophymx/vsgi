@@ -24,15 +24,53 @@ namespace VSGI {
 /**
  * A fairly simple wrapper class for holding the body of a response/request
  */
-public interface Body : Object {
+public class SimpleBody : Object, Body {
 
-    public abstract BodyIterator iterator();
+    private Bytes body;
 
-}
+    /**
+     *
+     */
+    public SimpleBody(Bytes body) {
+        this.body = body;
+    }
 
-public interface BodyIterator : Object {
-    public abstract bool next();
-    public abstract Bytes @get();
+    /**
+     * Converts given string to Bytes and wraps it.
+     * @param body string of response/request
+     */
+    public SimpleBody.from_string(string body) {
+        this.body = new Bytes(body.data);
+    }
+
+    /**
+     * Creates an empty body that is still a valid Iterable<Bytes> object.
+     */
+    public SimpleBody.empty() {
+        body = new Bytes({});
+    }
+
+    public BodyIterator iterator() {
+        return new Iterator(body);
+    }
+
+    public class Iterator : Object, BodyIterator {
+        private Bytes body;
+        private bool consumed = false;
+
+
+        public Iterator(Bytes body) {
+            this.body = body;
+        }
+
+        public  bool next() {
+            return consumed ? false : consumed = true;
+        }
+
+        public new Bytes @get() {
+            return body;
+        }
+    }
 }
 
 

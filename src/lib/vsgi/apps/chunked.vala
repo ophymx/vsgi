@@ -46,7 +46,7 @@ public class Chunked : Object, Application, CompositeApp {
                 !response.headers.has_key("Content-Length") &&
                 !response.headers.has_key("Transfer-Encoding")) {
             response.headers["Transfer-Encoding"] = "chunked";
-            response.body = new IterableChunkedBytes(response.body);
+            response.body = new ChunkedBody(response.body);
         }
 
         return response;

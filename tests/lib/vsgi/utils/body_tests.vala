@@ -24,7 +24,7 @@ public class BodyTests : Gee.TestCase {
     public BodyTests() {
         base("Body");
         add_test("body from string correctly converts back to string", () => {
-            test_body = new VSGI.Body.from_string("foobar");
+            test_body = new VSGI.SimpleBody.from_string("foobar");
             assert(body_to_string(test_body) == "foobar");
         });
     }
