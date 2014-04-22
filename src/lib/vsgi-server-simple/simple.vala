@@ -23,13 +23,18 @@
 /**
  *
  */
-public class VSGI.SimpleServer : VSGI.Server {
+namespace VSGI {
+
+public class SimpleServer : Object, Server {
 
     private ThreadedSocketService socket_service;
     private MainLoop main_loop;
     private uint16 port;
 
-    public SimpleServer(uint16 port=8080) {
+    public Application app { get; protected set; }
+
+    public SimpleServer(Application app, uint16 port=8080) {
+        this.app = app;
         this.port = port;
 
         socket_service = new ThreadedSocketService(150);
@@ -52,7 +57,7 @@ public class VSGI.SimpleServer : VSGI.Server {
     /**
      * {@inheritDoc}
      */
-    public override void start() {
+    public void start() {
         assert(this.app != null);
         socket_service.start();
         log("VSGI.SimpleServer", LogLevelFlags.LEVEL_INFO, "Server on port %d",
@@ -63,7 +68,7 @@ public class VSGI.SimpleServer : VSGI.Server {
     /**
      * {@inheritDoc}
      */
-    public override void stop() {
+    public void stop() {
         log("VSGI.SimpleServer", LogLevelFlags.LEVEL_INFO, "Shutting down");
         socket_service.stop();
         main_loop.quit();
@@ -94,7 +99,7 @@ public class VSGI.SimpleServer : VSGI.Server {
 
     private bool send_response(OutputStream output, Response response) {
         var builder = new StringBuilder();
-        builder.append_printf("%s %s %s\r\n", VSGI.Protocol.HTTP1_1.to_string(),
+        builder.append_printf("%s %s %s\r\n", Protocol.HTTP1_1.to_string(),
             response.status.to_string(), response.status.message());
         foreach (var header in response.headers.entries) {
             builder.append_printf("%s: %s\r\n", header.key, header.value);
@@ -161,14 +166,14 @@ public class VSGI.SimpleServer : VSGI.Server {
     }
 
     private bool parse_request_line(string request_line,
-                                    out VSGI.Method method,
-                                    out VSGI.Protocol protocol,
+                                    out Method method,
+                                    out Protocol protocol,
                                     out string path,
                                     out string query_string)
                                     throws ParseRequestError {
 
         var req = request_line.split(" ");
-        var _method = VSGI.Method.from_string(req[0]);
+        var _method = Method.from_string(req[0]);
         /* Invalid Method */
         if (_method == null) {
             throw new ParseRequestError.UNSUPPORTED_METHOD(
@@ -177,7 +182,7 @@ public class VSGI.SimpleServer : VSGI.Server {
         method = (!) _method;
 
         /* Invalid Protocol */
-        var _protocol = VSGI.Protocol.from_string(req[2]);
+        var _protocol = Protocol.from_string(req[2]);
         if (_protocol == null) {
             throw new ParseRequestError.UNSUPPORTED_PROTOCOL(
                 "Unsupported HTTP Protocol version '%s'", req[2]);
@@ -291,4 +296,6 @@ public class VSGI.SimpleServer : VSGI.Server {
         }
         return true;
     }
+}
+
 }

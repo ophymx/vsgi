@@ -20,7 +20,9 @@
  *      Jeffrey T. Peckham <abic@ophymx.com>
  */
 
-public class VSGI.FcgiServer : VSGI.Server {
+namespace VSGI {
+
+public class FcgiServer : Object, Server {
 
     protected enum State {
         STOPPED,
@@ -36,14 +38,17 @@ public class VSGI.FcgiServer : VSGI.Server {
     private int backlog;
     private State state;
 
-    public FcgiServer(string socket_path, int backlog=64) {
+    public Application app { get; protected set; }
+
+    public FcgiServer(Application app, string socket_path, int backlog=64) {
         assert(FastCGI.init() == 0);
+        this.app = app;
         this.socket_path = socket_path;
         this.backlog = backlog;
         this.state = State.STOPPED;
     }
 
-    public override void start() {
+    public void start() {
         state = State.STARTING;
         socket_fd = FastCGI.open_socket(socket_path, backlog);
         assert(socket_fd != -1);
@@ -52,7 +57,7 @@ public class VSGI.FcgiServer : VSGI.Server {
         listen();
     }
 
-    public override void stop() {
+    public void stop() {
         state = State.STOPPING;
     }
 
@@ -106,4 +111,6 @@ public class VSGI.FcgiServer : VSGI.Server {
         }
         return true;
     }
+}
+
 }
