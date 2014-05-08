@@ -34,14 +34,25 @@ public class Cascade : Object, Application {
      * @param apps List of applications to cascade through
      * @param catches return codes to catch and cascade on
      */
-    public Cascade(Gee.List<Application> apps =
-        new Gee.ArrayList<Application>(), Status[] catches = {404, 405}) {
-
+    public Cascade(Gee.List<Application> apps, Status[] catches) {
         this.apps = apps;
+        this.catches = array_to_set(catches);
+    }
 
-        this.catches = new Gee.HashSet<uint>();
-        foreach (var status in catches)
-            this.catches.add(status);
+    /**
+     * @param apps List of applications to cascade through
+     * @param catches return codes to catch and cascade on
+     */
+    public Cascade.default(Gee.List<Application> apps) {
+        this.apps = apps;
+        this.catches = array_to_set({404, 405});
+    }
+
+    private static Gee.HashSet<Status> array_to_set(Status[] statuses) {
+        var catches = new Gee.HashSet<Status>();
+        foreach (var status in statuses)
+            catches.add(status);
+        return catches;
     }
 
     /**

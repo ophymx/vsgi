@@ -41,7 +41,7 @@ public class CascadeAppTests : AppTests {
             "at least one app response is not caught", () => {
             test_apps.add(new VSGI.NotFound());
             test_apps.add(new VSGI.Echo());
-            var test_cascade_app = new VSGI.Cascade(test_apps);
+            var test_cascade_app = new VSGI.Cascade.default(test_apps);
             var test_response = test_cascade_app.call(test_request);
             assert(test_response.status == 200);
         });
@@ -52,7 +52,7 @@ public class CascadeAppTests : AppTests {
     public override void set_up() {
         base.set_up();
         test_apps = new Gee.ArrayList<VSGI.Application>();
-        test_app = new VSGI.Cascade();
+        test_app = new VSGI.Cascade.default(test_apps);
     }
 
     public override void tear_down() {
