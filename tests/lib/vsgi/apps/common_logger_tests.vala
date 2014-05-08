@@ -27,7 +27,7 @@ public class CommonLoggerAppTests : CompositeAppTests {
 
     public override void set_up() {
         base.set_up();
-        test_compositeapp = new VSGI.CommonLogger();
+        test_compositeapp = new VSGI.CommonLogger.Composite();
     }
 
     public override void tear_down() {

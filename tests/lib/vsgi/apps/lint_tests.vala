@@ -27,7 +27,7 @@ public class LintAppTests : CompositeAppTests {
 
     public override void set_up() {
         base.set_up();
-        test_compositeapp = new VSGI.Lint();
+        test_compositeapp = new VSGI.Lint.Composite();
     }
 
 }

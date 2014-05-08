@@ -25,9 +25,26 @@ namespace VSGI {
  * A CompositeApp to try appending other suffixes onto
  * the end of a request path in the case that the results return 404.
  */
-public class SuffixMapper : Object, Application, CompositeApp {
+public class SuffixMapper : Object, Application {
 
-    public Application app { get; set; }
+    public class Composite : Object, CompositeApp {
+        private string[] suffixes;
+
+        public Composite(string[] suffixes) {
+            this.suffixes = suffixes;
+        }
+
+        public Composite.default() {
+        }
+
+        public Application of(Application app) {
+            return suffixes == null ?
+                new SuffixMapper.default(app) :
+                new SuffixMapper(app, suffixes);
+        }
+    }
+
+    private Application app;
 
     private string[] suffixes;
 
@@ -35,9 +52,16 @@ public class SuffixMapper : Object, Application, CompositeApp {
      * @param app Application to add suffixes for in case of 404.
      * @param suffixes List of suffixes to attempt to add to request.
      */
-    public SuffixMapper(Application? app=null,
-        string[] suffixes = {".html", "index.hml", "/index.html"}) {
+    public SuffixMapper(Application app, string[] suffixes) {
         this.suffixes = suffixes;
+        this.app = app;
+    }
+
+    /**
+     * @param app Application to add suffixes for in case of 404.
+     */
+    public SuffixMapper.default(Application app) {
+        this.suffixes = {".html", "index.hml", "/index.html"};
         this.app = app;
     }
 
@@ -45,7 +69,6 @@ public class SuffixMapper : Object, Application, CompositeApp {
      * {@inheritDoc}
      */
     public Response call(Request request) {
-        assert(app != null);
         var original_response = app.call(request);
         if (original_response.status != 404)
             return original_response;

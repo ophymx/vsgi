@@ -25,13 +25,16 @@ public class CompositeStackAppTests : CompositeAppTests {
         base("CompositeStack");
     }
 
+    private Gee.ArrayList<VSGI.CompositeApp> test_apps;
+
     public override void set_up() {
         base.set_up();
-        test_compositeapp = new VSGI.CompositeStack();
+        test_apps = new Gee.ArrayList<VSGI.CompositeApp>();
+        test_compositeapp = new VSGI.CompositeStack(test_apps);
     }
 
     public override void tear_down() {
-        test_compositeapp = null;
+        test_apps = null;
         base.tear_down();
     }
 

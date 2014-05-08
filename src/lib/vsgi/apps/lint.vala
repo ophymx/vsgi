@@ -24,14 +24,20 @@ namespace VSGI {
 /**
  * Application to validate the request coming in and response being returned.
  */
-public class Lint : Object, Application, CompositeApp {
+public class Lint : Object, Application {
 
-    public Application app { set; get; }
+    public class Composite : Object, CompositeApp {
+        public Application of(Application app) {
+            return new Lint(app);
+        }
+    }
+
+    private Application app;
 
     /**
      * @param app Application to wrapper with validators
      */
-    public Lint(Application? app=null) {
+    public Lint(Application app) {
         this.app = app;
     }
 
@@ -39,7 +45,6 @@ public class Lint : Object, Application, CompositeApp {
      * {@inheritDoc}
      */
     public Response call(Request request) {
-        assert(app != null);
         try {
             request.validate();
         } catch (InvalidRequest e) {

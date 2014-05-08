@@ -27,7 +27,7 @@ public class ChunkedAppTests : CompositeAppTests {
 
     public override void set_up() {
         base.set_up();
-        test_compositeapp = new VSGI.Chunked();
+        test_compositeapp = new VSGI.Chunked.Composite();
     }
 
 }

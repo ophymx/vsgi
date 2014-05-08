@@ -23,25 +23,14 @@ public abstract class CompositeAppTests : AppTests {
 
     public CompositeAppTests(string name) {
         base(name);
-        add_test("[CompositeApp] call() asserts that app is not null", () => {
-            if (Test.trap_fork(0, TestTrapFlags.SILENCE_STDOUT |
-                                    TestTrapFlags.SILENCE_STDERR)) {
-                test_compositeapp.call(test_request);
-                Process.exit(0);
-            }
-
-            Test.trap_assert_failed();
-        });
     }
 
     protected VSGI.CompositeApp test_compositeapp;
 
     public override void test_valid_response() {
-        test_compositeapp.app = new VSGI.NoContent();
-        test_app = test_compositeapp;
+        test_app = test_compositeapp.of(new VSGI.NoContent());
         base.test_valid_response();
         test_app = null;
-        test_compositeapp.app = null;
     }
 
     public override void tear_down() {

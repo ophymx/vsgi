@@ -24,19 +24,42 @@ namespace VSGI {
 /**
  * Maps path prefixes to apps.
  */
-public class Mapper : Object, Application, CompositeApp {
+public class Mapper : Object, Application {
+
+    public class Composite : Object, CompositeApp {
+        private Gee.Map<string, Application> apps;
+
+        public Composite(Gee.Map<string, Application> apps) {
+            this.apps = apps;
+        }
+
+        public Composite.empty() {
+            this.apps = new Gee.HashMap<string, Application>();
+        }
+
+        public Application of(Application app) {
+            return new Mapper(apps, app);
+        }
+    }
 
     private Gee.Map<string, Application> apps;
 
-    public Application app { get; set; }
+    private Application app;
 
     /**
      *
      */
-    public Mapper(Gee.Map<string, Application> apps =
-        new Gee.HashMap<string, Application>(), Application? app=null) {
+    public Mapper(Gee.Map<string, Application> apps, Application app) {
         this.apps = apps;
         this.app = app;
+    }
+
+    /**
+     *
+     */
+    public Mapper.default(Gee.Map<string, Application> apps) {
+        this.apps = apps;
+        this.app = new NotFound();
     }
 
     /**
@@ -59,7 +82,6 @@ public class Mapper : Object, Application, CompositeApp {
      * * Rethink implementation and use
      */
     public Response call(Request request) {
-        assert(app != null);
         var path = request.path_info;
 
         foreach (var entry in apps.entries) {
@@ -71,7 +93,7 @@ public class Mapper : Object, Application, CompositeApp {
                 return app.call(request);
             }
         }
-        return app.call(request);
+        return this.app.call(request);
     }
 }
 

@@ -22,67 +22,33 @@
 namespace VSGI {
 
 /**
- * An app that nests a list of Composite Apps
+ * A CompositApp that nests a list of CompositeApps
  * together. The goal is to be similar to the 'use' feature in
  * rack helper apps.
  */
-public class CompositeStack : Object, Application, CompositeApp {
+public class CompositeStack : Object, CompositeApp {
 
     private Gee.ArrayList<CompositeApp> apps;
 
-    private Application _app;
-    public Application app {
-        get {
-            return this._app;
-        }
-        set {
-            this._app = value;
-            if (!apps.is_empty)
-                apps.last().app = value;
-        }
-    }
-
-    /**
-     * @param apps List of composite applications to chain
-     * @param app Application that ends the chain
-     */
-    public CompositeStack(Application? app = null,
-        Gee.ArrayList<CompositeApp> apps = new Gee.ArrayList<CompositeApp>()) {
-
+    public CompositeStack(Gee.ArrayList<CompositeApp> apps) {
         this.apps = apps;
-        this.app = app;
     }
 
-    /**
-     * Add application to the end of the helper chain (not final app)
-     */
-    public bool add(CompositeApp app) {
-        if (apps.add(app)) {
-            restack();
-            return true;
-        } else {
-            return false;
+    public Application of(Application app) {
+        var stack = app;
+        var iter = apps.bidir_list_iterator();
+
+        if (!iter.last()) {
+            return stack;
         }
-    }
 
-    private void restack() {
-        CompositeApp previous = new PassThrough();
+        stack = iter.get().of(stack);
 
-        foreach (var app in apps) {
-            previous.app = app;
-            previous = app;
+        while (iter.previous()) {
+            stack = iter.get().of(stack);
         }
-        previous.app = app;
-    }
 
-    /**
-     * {@inheritDoc}
-     */
-    public Response call(Request request) {
-        assert(app != null);
-
-        return (apps.is_empty ? app :
-            apps.first() as Application).call(request);
+        return stack;
     }
 }
 

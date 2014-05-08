@@ -24,12 +24,12 @@ namespace VSGI {
 /**
  * Implemented by classes that can be chained together.
  */
-public interface CompositeApp : Object, Application {
+public interface CompositeApp : Object {
 
     /**
      * The app to call through to.
      */
-    public abstract Application app { get; set; }
+    public abstract Application of(Application app);
 }
 
 }

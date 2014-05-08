@@ -27,10 +27,11 @@ public class MapperAppTests : CompositeAppTests {
 
     protected Gee.Map<string, VSGI.Application> test_map;
 
+
     public override void set_up() {
         base.set_up();
         test_map = new Gee.HashMap<string, VSGI.Application>();
-        test_compositeapp = new VSGI.Mapper();
+        test_compositeapp = new VSGI.Mapper.Composite(test_map);
     }
 
 

@@ -24,14 +24,20 @@ namespace VSGI {
 /**
  *
  */
-public class Chunked : Object, Application, CompositeApp {
+public class Chunked : Object, Application {
 
-    public Application app { set; get; }
+    public class Composite : Object, CompositeApp {
+      public Application of(Application app) {
+        return new Chunked(app);
+      }
+    }
+
+    private Application app;
 
     /**
      * @param app Application to wrap with chunked transfer
      */
-    public Chunked(Application? app=null) {
+    public Chunked(Application app) {
         this.app = app;
     }
 

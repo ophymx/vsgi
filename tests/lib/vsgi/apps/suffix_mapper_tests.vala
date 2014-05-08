@@ -27,6 +27,6 @@ public class SuffixMapperAppTests : CompositeAppTests {
 
     public override void set_up() {
         base.set_up();
-        test_compositeapp = new VSGI.SuffixMapper();
+        test_compositeapp = new VSGI.SuffixMapper.Composite.default();
     }
 }
